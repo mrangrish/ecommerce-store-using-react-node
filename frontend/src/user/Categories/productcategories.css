@@ -1,0 +1,53 @@
+.slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: calc(100% - 20px); 
+  margin-right: 20px;
+  scroll-snap-align: start;
+  position: relative;
+}
+
+.card img {
+  width: 100%;
+  height: 216px; 
+}
+
+.content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card:hover .content-overlay {
+  opacity: 1;
+}
+
+.con {
+  padding: 20px;
+  color: white;
+}
+
+/* Media Queries for Responsive Design */
+@media only screen and (min-width: 768px) {
+  .card {
+    width: 352px; /* Adjusted width for desktop */
+  }
+}
+.slider-container {
+  overflow-x: hidden;
+}
+
+
