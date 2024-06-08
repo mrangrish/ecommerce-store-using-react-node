@@ -3,8 +3,8 @@ import axios from "axios";
 import PhoneInput from "react-phone-number-input";
 import 'react-phone-number-input/style.css';
 import { ToastContainer, toast } from 'react-toastify';
-import { IoCheckmark } from 'react-icons/io5';
 import './Orderdetails.css';
+import { IoCheckmark } from 'react-icons/io5';
 import 'react-toastify/dist/ReactToastify.css';
 
 function AuthUserOrder({ userId, setUserId }) {
@@ -13,17 +13,18 @@ function AuthUserOrder({ userId, setUserId }) {
         phone: '',
         Address: '',
         City: '',
-        zip_Code: '',
-        useremail: '',
+        zip_Code: ''
     });
 
-    const [checkuserId, setCheckUserId] = useState([]);
+    const [checkUserId, setCheckUserId] = useState([]);
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [otpSent, setOtpSent] = useState(false);
     const [otpVerified, setOtpVerified] = useState(false);
     const [registerMessage, setRegisterMessage] = useState('');
-    const [emailError, setemailError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [addtocart, setAddtocart] = useState([]);
+
     useEffect(() => {
         const fetchUserId = async () => {
             try {
@@ -32,13 +33,11 @@ function AuthUserOrder({ userId, setUserId }) {
                     const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${response.data.userId}`);
                     setCheckUserId(userResponse.data);
                     if (userResponse.data.length > 0) {
-
                         setValues({
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
                             City: userResponse.data[0].City,
-                            zip_Code: userResponse.data[0].zip_Code,
-                            useremail: userResponse.data[0].email,
+                            zip_Code: userResponse.data[0].zip_Code
                         });
                     }
                 }
@@ -73,13 +72,34 @@ function AuthUserOrder({ userId, setUserId }) {
         fetchUserDetails();
     }, [otpVerified, userId]);
 
+    useEffect(() => {
+        const fetchAddtocartproduct = async () => {
+            try {
+                if (userId) {
+                    const response = await axios.get(`http://localhost:8081/routeaddtocart/Getaddtocart/${userId}`);
+                    setAddtocart(response.data);
+                    console.log(response.data);
+                } else {
+                    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                    setAddtocart(cartItems);
+                    console.log(cartItems);
+                }
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                setAddtocart(cartItems);
+                console.log(cartItems);
+            }
+        };
+        fetchAddtocartproduct();
+    }, [userId]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
             await axios.put(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
             setCheckUserId(prevState => prevState.map(item => item.id === userId ? { ...item, ...values } : item));
-            toast.success('Address details updated successfully!');
         } catch (err) {
             console.error('Error updating phone number:', err);
         }
@@ -88,28 +108,28 @@ function AuthUserOrder({ userId, setUserId }) {
     const handleInputChange = (name, value) => {
         setValues(prev => ({ ...prev, [name]: value }));
     };
-    const sendOtp = () => {
-    if (email.trim() === '') {
-       setemailError('Email Should be not empty');
-        return;
-    }
-    
-    axios.post('http://localhost:8081/mailverified/send-email-otp', { email })
-        .then(response => {
-            if (response.data.success) {
-                setOtpSent(true);
-                toast.success('OTP Sent Successfully. Please check your email!');
-            }
-        })
-        .catch(error => {
-            if (error.response && error.response.status === 400) {
-                setRegisterMessage('Email not found, please register first');
-            } else {
-                toast.error('Error sending OTP. Please try again.');
-            }
-        });
-};
 
+    const sendOtp = () => {
+        if (email.trim() === '') {
+            setEmailError('Email should not be empty');
+            return;
+        }
+
+        axios.post('http://localhost:8081/mailverified/send-email-otp', { email })
+            .then(response => {
+                if (response.data.success) {
+                    setOtpSent(true);
+                    toast.success('OTP sent successfully. Please check your email!');
+                }
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 400) {
+                    setRegisterMessage('Email not found, please register first');
+                } else {
+                    toast.error('Error sending OTP. Please try again.');
+                }
+            });
+    };
 
     const verifyOtp = async () => {
         try {
@@ -176,14 +196,14 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 ) : (
                     <div className="col-md-7">
-                        <div style={{ margin: "0 0", color: checkuserId ? "black" : "white", background: checkuserId ? "white" : "lightseagreen" }} className="shadow rounded p-3">
-                            {checkuserId.length === 0 ? (
+                       <div style={{ margin: "0 0", color: checkUserId ? "black" : "white", background: checkUserId ? "white" : "lightseagreen" }} className="shadow rounded p-3">
+                            {checkUserId.length === 0 ? (
                                      <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
                                 ): (
                                   <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px"}}/> {values.useremail}</p>
                                 )}
                         </div>
-                        {checkuserId.length === 0 ? (
+                        {!otpVerified ? (
                             <div>
                                 <div style={{ background: "lightgrey", padding: "3% 4%" }}>
                                     <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
@@ -195,11 +215,11 @@ function AuthUserOrder({ userId, setUserId }) {
                                         disabled={otpSent}
                                         placeholder="Enter Email"
                                     />
-                                     {emailError && <span className='text-danger'>{emailError}</span>}
-                                     <div className='mt-2'>
-                                    {!otpSent && (
-                                        <button onClick={sendOtp} className="btn btn-warning">Submit</button>
-                                    )}
+                                    {emailError && <span className='text-danger'>{emailError}</span>}
+                                    <div className='mt-2'>
+                                        {!otpSent && (
+                                            <button onClick={sendOtp} className="btn btn-warning">Submit</button>
+                                        )}
                                     </div>
                                     {otpSent && !otpVerified && (
                                         <div className="mb-3">
@@ -219,7 +239,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                 </div>
                             </div>
                         ) : (
-                            checkuserId.map((item, index) => (
+                            checkUserId.map((item, index) => (
                                 <div key={index}>
                                     <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
                                         Address Details
@@ -228,7 +248,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                         <div className="row">
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputphone" className="form-label text-muted">Phone Number</label>
-                                                <PhoneInput value={values.phone} defaultCountry="IN"  onChange={(value) => handleInputChange('phone', value)} ref={ref} placeholder="Enter Your Mobile number" />
+                                                <PhoneInput value={values.phone} defaultCountry="IN" onChange={(value) => handleInputChange('phone', value)} ref={ref} placeholder="Enter Your Mobile number" />
                                             </div>
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputAddress" className="form-label text-muted">Address*</label>
@@ -236,15 +256,15 @@ function AuthUserOrder({ userId, setUserId }) {
                                             </div>
                                         </div>
                                         <div className="row">
-                                            <div className="mb-3  col-6">
+                                            <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputCity" className="form-label text-muted">Town/City</label>
                                                 <input type="text" className="form-control input text-muted" value={values.City} onChange={(e) => handleInputChange('City', e.target.value)} />
                                             </div>
-                                            <div className="mb-3  col-6">
+                                            <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputPostcode" className="form-label text-muted">Postcode / ZIP*</label>
-                                                <input type="text" className="form-control input text-muted" value={values.zip_Code} onChange={(e)=> handleInputChange('zip_Code', e.target.value)} />
+                                                <input type="text" className="form-control input text-muted" value={values.zip_Code} onChange={(e) => handleInputChange('zip_Code', e.target.value)} />
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div className="form-group mt-3">
                                             <button className="btn btn-danger" onClick={handleSubmit}>Change</button>
                                             <button className="btn btn-primary">Next</button>
@@ -258,9 +278,14 @@ function AuthUserOrder({ userId, setUserId }) {
                 <div className="col-5">
                     <div className="order-summary">
                         <h4>Order Summary</h4>
-                        <p>Item 1: $10</p>
-                        <p>Item 2: $20</p>
-                        <p>Total: $30</p>
+                        {addtocart.length > 0 ? (
+                            addtocart.map((item, index) => (
+                                <p key={index}>{item.name}: ${item.price}</p>
+                            ))
+                        ) : (
+                            <p>No items in cart</p>
+                        )}
+                        <p>Total: ${addtocart.reduce((total, item) => total + item.price, 0)}</p>
                     </div>
                 </div>
             </div>
