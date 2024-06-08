@@ -226,6 +226,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                         </div>
                                         <div className="form-group mt-3">
                                             <button className="btn btn-danger" onClick={handleSubmit}>Change</button>
+                                            <button className="btn btn-primary">Next</button>
                                         </div>
                                     </div>
                                 </div>
