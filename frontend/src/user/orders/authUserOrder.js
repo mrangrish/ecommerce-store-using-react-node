@@ -20,7 +20,7 @@ function AuthUserOrder({ userId, setUserId }) {
     const [otpSent, setOtpSent] = useState(false);
     const [otpVerified, setOtpVerified] = useState(false);
     const [registerMessage, setRegisterMessage] = useState('');
-
+    const [emailError, setemailError] = useState('');
     useEffect(() => {
         const fetchUserId = async () => {
             try {
@@ -82,21 +82,28 @@ function AuthUserOrder({ userId, setUserId }) {
     const handleInputChange = (name, value) => {
         setValues(prev => ({ ...prev, [name]: value }));
     };
-
     const sendOtp = () => {
-        axios.post('http://localhost:8081/mailverified/send-email-otp', { email })
-            .then(response => {
-                if (response.data.success) {
-                    setOtpSent(true);
-                    toast.success('OTP Sent Successfully. Please check your email!');
-                }
-            })
-            .catch(error => {
-                if (error.response && error.response.status === 400) {
-                    setRegisterMessage('Email not found, please register first');
-                }
-            });
-    };
+    if (email.trim() === '') {
+       setemailError('Email Should be not empty');
+        return;
+    }
+    
+    axios.post('http://localhost:8081/mailverified/send-email-otp', { email })
+        .then(response => {
+            if (response.data.success) {
+                setOtpSent(true);
+                toast.success('OTP Sent Successfully. Please check your email!');
+            }
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 400) {
+                setRegisterMessage('Email not found, please register first');
+            } else {
+                toast.error('Error sending OTP. Please try again.');
+            }
+        });
+};
+
 
     const verifyOtp = async () => {
         try {
@@ -164,7 +171,7 @@ function AuthUserOrder({ userId, setUserId }) {
                 ) : (
                     <div className="col-md-7">
                         <div style={{ margin: "0 0", color: otpVerified ? "black" : "white", background: otpVerified ? "white" : "lightseagreen" }} className="shadow rounded p-3">
-                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative" }}>
+                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
                                 Login/Signup {otpVerified && email}
                             </p>
                         </div>
@@ -179,9 +186,12 @@ function AuthUserOrder({ userId, setUserId }) {
                                         onChange={(e) => setEmail(e.target.value)}
                                         disabled={otpSent}
                                     />
+                                     {emailError && <span className='text-danger'>{emailError}</span>}
+                                     <div className='mt-2'>
                                     {!otpSent && (
                                         <button onClick={sendOtp} className="btn btn-warning">Submit</button>
                                     )}
+                                    </div>
                                     {otpSent && !otpVerified && (
                                         <div className="mb-3">
                                             <label htmlFor="exampleInputOtp" className="form-label text-muted">Enter OTP*</label>
