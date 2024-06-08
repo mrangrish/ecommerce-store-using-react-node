@@ -212,7 +212,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                 </div>
                             </div>
                         ))
-                    )}
+                    )} 
                 </div>
                 <div className="col-5">
                     <div className="order-summary">
