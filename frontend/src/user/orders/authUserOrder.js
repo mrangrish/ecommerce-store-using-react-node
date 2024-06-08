@@ -163,8 +163,10 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 ) : (
                     <div className="col-md-7">
-                        <div style={{ margin: "0 0", background: 'lightseagreen', padding: "25px", color: "white" }} className="shadow rounded">
-                            <p style={{ fontSize: "large", fontWeight: "500", position: "absolute", top: '128px', left: '131px' }}>Login/Signup</p>
+                        <div style={{ margin: "0 0", color: otpVerified ? "black" : "white", background: otpVerified ? "white" : "lightseagreen" }} className="shadow rounded p-3">
+                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative" }}>
+                                Login/Signup {otpVerified && email}
+                            </p>
                         </div>
                         {checkuserId.length === 0 ? (
                             <div>
