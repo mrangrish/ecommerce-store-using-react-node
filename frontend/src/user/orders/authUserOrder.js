@@ -225,7 +225,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                 <label htmlFor="exampleInputPostcode" className="form-label text-muted">Postcode / ZIP*</label>
                                                 <input type="text" className="form-control text-muted" value={values.zip_Code} onChange={(e)=> handleInputChange('zip_Code', e.target.value)} />
                                             </div>
-                                        </div>
+                                        </div>  
                                         <div className="form-group mt-3">
                                             <button className="btn btn-danger" onClick={handleSubmit}>Change</button>
                                             <button className="btn btn-primary">Next</button>
