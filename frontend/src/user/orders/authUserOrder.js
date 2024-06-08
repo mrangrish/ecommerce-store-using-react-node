@@ -14,7 +14,7 @@ function AuthUserOrder({ userId, setUserId }) {
         zip_Code: ''
     });
 
-    const [checkuserId, setcheckuserId] = useState([]);
+    const [checkuserId, setCheckUserId] = useState([]);
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [otpSent, setOtpSent] = useState(false);
@@ -27,7 +27,7 @@ function AuthUserOrder({ userId, setUserId }) {
                 const response = await axios.get(`http://localhost:8081/session`, { withCredentials: true });
                 if (response.data.userId) {
                     const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${response.data.userId}`);
-                    setcheckuserId(userResponse.data);
+                    setCheckUserId(userResponse.data);
                     if (userResponse.data.length > 0) {
                         setValues({
                             phone: userResponse.data[0].phone,
@@ -45,12 +45,35 @@ function AuthUserOrder({ userId, setUserId }) {
         fetchUserId();
     }, []);
 
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            if (otpVerified) {
+                try {
+                    const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${userId}`);
+                    setCheckUserId(userResponse.data);
+                    if (userResponse.data.length > 0) {
+                        setValues({
+                            phone: userResponse.data[0].phone,
+                            Address: userResponse.data[0].Address,
+                            City: userResponse.data[0].City,
+                            zip_Code: userResponse.data[0].zip_Code
+                        });
+                    }
+                } catch (err) {
+                    console.error('Error fetching user details:', err);
+                }
+            }
+        };
+
+        fetchUserDetails();
+    }, [otpVerified, userId]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = await axios.put(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
-            setcheckuserId(prevState => prevState.map(item => item.id === userId ? { ...item, ...values } : item));
+            await axios.put(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
+            setCheckUserId(prevState => prevState.map(item => item.id === userId ? { ...item, ...values } : item));
         } catch (err) {
             console.error('Error updating phone number:', err);
         }
@@ -83,9 +106,6 @@ function AuthUserOrder({ userId, setUserId }) {
                 setOtpVerified(true);
                 setUserId(response.data.userId);
                 toast.success('OTP verified successfully!');
-
-                const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${response.data.userId}`);
-                setcheckuserId(userResponse.data);
             } else {
                 toast.error('OTP verification failed.');
             }
@@ -146,12 +166,9 @@ function AuthUserOrder({ userId, setUserId }) {
                         <div style={{ margin: "0 0", background: 'lightseagreen', padding: "25px", color: "white" }} className="shadow rounded">
                             <p style={{ fontSize: "large", fontWeight: "500", position: "absolute", top: '128px', left: '131px' }}>Login/Signup</p>
                         </div>
-                    
-                        
-                    
-                            {checkuserId.length === 0 ? (
-                                <div>
-                                    <div style={{ background: "lightgrey", padding: "3% 4%" }}>
+                        {checkuserId.length === 0 ? (
+                            <div>
+                                <div style={{ background: "lightgrey", padding: "3% 4%" }}>
                                     <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
                                     <input
                                         type="email"
@@ -175,20 +192,18 @@ function AuthUserOrder({ userId, setUserId }) {
                                             <button onClick={verifyOtp} className="btn btn-success">Verify OTP</button>
                                         </div>
                                     )}
-                                    
                                 </div>
                                 <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
                                     Address Details
                                 </div>
-                                </div>
-                                
-                            ) : ( 
-                                checkuserId.map((item, index) => (
-                                    <div key={index}>
-                                        <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
-                                    Address Details
-                                </div>
-                                <div style={{ background: "lightgrey", padding: "3% 4%" }}>
+                            </div>
+                        ) : (
+                            checkuserId.map((item, index) => (
+                                <div key={index}>
+                                    <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
+                                        Address Details
+                                    </div>
+                                    <div style={{ background: "lightgrey", padding: "3% 4%" }}>
                                         <div className="row">
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputphone" className="form-label text-muted">Phone Number</label>
@@ -213,10 +228,9 @@ function AuthUserOrder({ userId, setUserId }) {
                                             <button className="btn btn-danger" onClick={handleSubmit}>Change</button>
                                         </div>
                                     </div>
-                                    </div>
-                                ))
-                            )}
-                        
+                                </div>
+                            ))
+                        )}
                     </div>
                 )}
                 <div className="col-5">
@@ -228,7 +242,6 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 </div>
             </div>
-            
         </div>
     );
 }
