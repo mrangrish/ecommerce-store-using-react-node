@@ -82,4 +82,30 @@ router.put('/updatePhoneNumber/:userId', (req, res) => {
     });
 });
 
+router.post('/movecartItems', (req, res) => {
+    console.log(req.body);
+    try {
+        const userId = req.body.userId;
+        const productId = req.body.productId;
+        // Assuming quantity is also sent in the request body
+        const quantity = req.body.quantity;
+        const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        // Adjust the SQL query to include the quantity value
+        const sql = "INSERT INTO addtocart (user_id, product_id, quantity, created_at) VALUES (?, ?, ?, ?)";
+        // Pass all values in the array for parameterized query
+        db.query(sql, [userId, productId, quantity, currentDateTime], (err, result) => {
+            if (err) {
+                console.error('Error inserting into addtocart:', err);
+                return res.status(500).json({ error: 'Error inserting into addtocart' });
+            }
+            res.status(201).json({ message: 'Added to cart successfully' });
+        });
+    
+    } catch (error) {
+        console.error('Error in movecartItems endpoint:', error);
+        res.status(500).send(error);
+    }
+});
+
 module.exports = router;
