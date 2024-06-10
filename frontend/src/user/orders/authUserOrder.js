@@ -28,7 +28,7 @@ function AuthUserOrder({ userId, setUserId }) {
     const [emailError, setEmailError] = useState('');
     const [addtocart, setAddtocart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  
+
     useEffect(() => {
         const calculateTotalPrice = () => {
             let totalPrice = 0;
@@ -247,7 +247,7 @@ function AuthUserOrder({ userId, setUserId }) {
                             ) : (
                                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.useremail}</p>
                             )}
-                        </div>
+                        </div> 
                         {checkUserId.length === 0 ? (
                             !otpVerified ? (
                                 <div>
