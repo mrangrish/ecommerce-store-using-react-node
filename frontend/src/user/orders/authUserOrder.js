@@ -13,7 +13,8 @@ function AuthUserOrder({ userId, setUserId }) {
         phone: '',
         Address: '',
         City: '',
-        zip_Code: ''
+        zip_Code: '',
+        useremail: ''
     });
 
     const [checkUserId, setCheckUserId] = useState([]);
@@ -37,7 +38,8 @@ function AuthUserOrder({ userId, setUserId }) {
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
                             City: userResponse.data[0].City,
-                            zip_Code: userResponse.data[0].zip_Code
+                            zip_Code: userResponse.data[0].zip_Code,
+                            useremail: userResponse.data[0].email
                         });
                     }
                 }
@@ -196,48 +198,50 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 ) : (
                     <div className="col-md-7">
-                       <div style={{ margin: "0 0", color: checkUserId ? "black" : "white", background: checkUserId ? "white" : "lightseagreen" }} className="shadow rounded p-3">
+                        <div style={{ margin: "0 0", color: checkUserId ? "black" : "white", background: checkUserId ? "white" : "lightseagreen" }} className="shadow rounded p-3">
                             {checkUserId.length === 0 ? (
-                                     <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
-                                ): (
-                                  <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px"}}/> {values.useremail}</p>
-                                )}
+                                <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
+                            ) : (
+                                <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.useremail}</p>
+                            )}
                         </div>
-                        {!otpVerified ? (
-                            <div>
-                                <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                    <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
-                                    <input
-                                        type="email"
-                                        className="form-control text-muted input"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        disabled={otpSent}
-                                        placeholder="Enter Email"
-                                    />
-                                    {emailError && <span className='text-danger'>{emailError}</span>}
-                                    <div className='mt-2'>
-                                        {!otpSent && (
-                                            <button onClick={sendOtp} className="btn btn-warning">Submit</button>
+                        {checkUserId.length === 0 ? (
+                            !otpVerified ? (
+                                <div>
+                                    <div style={{ background: "lightgrey", padding: "3% 4%" }}>
+                                        <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
+                                        <input
+                                            type="email"
+                                            className="form-control text-muted input"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            disabled={otpSent}
+                                            placeholder="Enter Email"
+                                        />
+                                        {emailError && <span className='text-danger'>{emailError}</span>}
+                                        <div className='mt-2'>
+                                            {!otpSent && (
+                                                <button onClick={sendOtp} className="btn btn-warning">Submit</button>
+                                            )}
+                                        </div>
+                                        {otpSent && !otpVerified && (
+                                            <div className="mb-3">
+                                                <label htmlFor="exampleInputOtp" className="form-label text-muted">Enter OTP*</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control text-muted input"
+                                                    value={otp}
+                                                    onChange={(e) => setOtp(e.target.value)}
+                                                />
+                                                <button onClick={verifyOtp} className="btn btn-success">Verify OTP</button>
+                                            </div>
                                         )}
                                     </div>
-                                    {otpSent && !otpVerified && (
-                                        <div className="mb-3">
-                                            <label htmlFor="exampleInputOtp" className="form-label text-muted">Enter OTP*</label>
-                                            <input
-                                                type="text"
-                                                className="form-control text-muted input"
-                                                value={otp}
-                                                onChange={(e) => setOtp(e.target.value)}
-                                            />
-                                            <button onClick={verifyOtp} className="btn btn-success">Verify OTP</button>
-                                        </div>
-                                    )}
+                                    <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
+                                        Address Details
+                                    </div>
                                 </div>
-                                <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
-                                    Address Details
-                                </div>
-                            </div>
+                            ) : null
                         ) : (
                             checkUserId.map((item, index) => (
                                 <div key={index}>
@@ -248,21 +252,42 @@ function AuthUserOrder({ userId, setUserId }) {
                                         <div className="row">
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputphone" className="form-label text-muted">Phone Number</label>
-                                                <PhoneInput value={values.phone} defaultCountry="IN" onChange={(value) => handleInputChange('phone', value)} ref={ref} placeholder="Enter Your Mobile number" />
+                                                <PhoneInput
+                                                    value={values.phone}
+                                                    defaultCountry="IN"
+                                                    onChange={(value) => handleInputChange('phone', value)}
+                                                    ref={ref}
+                                                    placeholder="Enter Your Mobile number"
+                                                />
                                             </div>
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputAddress" className="form-label text-muted">Address*</label>
-                                                <input type="text" className="form-control input text-muted" value={values.Address} onChange={(e) => handleInputChange('Address', e.target.value)} />
+                                                <input
+                                                    type="text"
+                                                    className="form-control input text-muted"
+                                                    value={values.Address}
+                                                    onChange={(e) => handleInputChange('Address', e.target.value)}
+                                                />
                                             </div>
                                         </div>
                                         <div className="row">
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputCity" className="form-label text-muted">Town/City</label>
-                                                <input type="text" className="form-control input text-muted" value={values.City} onChange={(e) => handleInputChange('City', e.target.value)} />
+                                                <input
+                                                    type="text"
+                                                    className="form-control input text-muted"
+                                                    value={values.City}
+                                                    onChange={(e) => handleInputChange('City', e.target.value)}
+                                                />
                                             </div>
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputPostcode" className="form-label text-muted">Postcode / ZIP*</label>
-                                                <input type="text" className="form-control input text-muted" value={values.zip_Code} onChange={(e) => handleInputChange('zip_Code', e.target.value)} />
+                                                <input
+                                                    type="text"
+                                                    className="form-control input text-muted"
+                                                    value={values.zip_Code}
+                                                    onChange={(e) => handleInputChange('zip_Code', e.target.value)}
+                                                />
                                             </div>
                                         </div>
                                         <div className="form-group mt-3">
@@ -280,7 +305,7 @@ function AuthUserOrder({ userId, setUserId }) {
                         <h4>Order Summary</h4>
                         {addtocart.length > 0 ? (
                             addtocart.map((item, index) => (
-                                <p key={index}>{item.name}: ${item.price}</p>
+                                <p key={index}>{item.product_name}: ${item.product_price}</p>
                             ))
                         ) : (
                             <p>No items in cart</p>
