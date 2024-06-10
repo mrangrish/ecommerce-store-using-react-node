@@ -247,7 +247,7 @@ function AuthUserOrder({ userId, setUserId }) {
                             ) : (
                                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.useremail}</p>
                             )}
-                        </div> 
+                        </div>
                         {checkUserId.length === 0 ? (
                             !otpVerified ? (
                                 <div>
@@ -383,7 +383,7 @@ function AuthUserOrder({ userId, setUserId }) {
                         ) : (
                             <p>No items in cart</p>
                         )}
-                        <p>Total: &#8377;{totalPrice.toFixed(2)}</p>
+                        <p>Total: &#8377; {totalPrice.toFixed(2)}</p>
                     </div>
                 </div>
             </div>
