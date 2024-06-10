@@ -64,7 +64,6 @@ function AuthUserOrder({ userId, setUserId }) {
         fetchUserId();
     }, []);
 
-    console.log(values.useremail);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
