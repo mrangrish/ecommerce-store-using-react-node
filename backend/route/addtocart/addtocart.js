@@ -8,19 +8,41 @@ router.post('/cart', (req, res) => {
         const products_id = req.body.product_id;
         const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        const sql = "INSERT INTO addtocart (user_id, product_id, created_at) VALUES (?,?, ?)"
-        db.query(sql, [users_id, products_id, currentDateTime], (err, result) => {
-            if (err) {
-                console.error('error fetching brand', err);
-                return res.status(500).json({ err: 'Error' })
+        const checkSql = "SELECT * FROM addtocart WHERE user_id = ? AND product_id = ?";
+        db.query(checkSql, [users_id, products_id], (checkErr, checkResult) => {
+            if (checkErr) {
+                console.error('error checking cart', checkErr);
+                return res.status(500).json({ err: 'Error checking cart' });
             }
-            res.status(201).json({ message: 'add to cart successfully' });
+
+            if (checkResult.length > 0) {
+                // Entry exists, update quantity
+                const updateSql = "UPDATE addtocart SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ?";
+                db.query(updateSql, [users_id, products_id], (updateErr, updateResult) => {
+                    if (updateErr) {
+                        console.error('error updating cart', updateErr);
+                        return res.status(500).json({ err: 'Error updating cart' });
+                    }
+                    res.status(200).json({ message: 'Cart updated successfully' });
+                });
+            } else {
+                // Entry does not exist, insert new entry
+                const insertSql = "INSERT INTO addtocart (user_id, product_id, quantity, created_at) VALUES (?, ?, 1, ?)";
+                db.query(insertSql, [users_id, products_id, currentDateTime], (insertErr, insertResult) => {
+                    if (insertErr) {
+                        console.error('error adding to cart', insertErr);
+                        return res.status(500).json({ err: 'Error adding to cart' });
+                    }
+                    res.status(201).json({ message: 'Added to cart successfully' });
+                });
+            }
         });
-    
     } catch (error) {
         res.status(500).send(error);
     }
-})
+});
+
+
 
 router.get('/addtocartcount/:id', (req, res) => {
     const userId = req.params.id;

@@ -142,6 +142,7 @@ function Authaddtocart({ userId }) {
                                         <div className="row">{item.product_name}</div>
                                     </div>
                                     <div className="col-3">
+                                    
                                         <button onClick={(e) => { e.preventDefault(); handleDecrement(item.originalIndex); }} style={{ background: "transparent", border: "none" }}><FontAwesomeIcon icon={faMinus} style={{ fontSize: "xx-small", border: "1px solid lightgrey", padding: "7px 7px", borderRadius: "25px" }} /></button>
 
                                         <span style={{ border: "1px solid lightgrey", textAlign: "center", padding: "11px 24px" }}>{item.quantity}</span>
