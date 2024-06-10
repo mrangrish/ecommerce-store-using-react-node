@@ -53,6 +53,7 @@ function AuthUserOrder({ userId, setUserId }) {
                             zip_Code: userResponse.data[0].zip_Code,
                             useremail: userResponse.data[0].email
                         });
+        
                     }
                 }
             } catch (err) {
@@ -62,6 +63,8 @@ function AuthUserOrder({ userId, setUserId }) {
 
         fetchUserId();
     }, []);
+
+    console.log(values.useremail);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -74,7 +77,8 @@ function AuthUserOrder({ userId, setUserId }) {
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
                             City: userResponse.data[0].City,
-                            zip_Code: userResponse.data[0].zip_Code
+                            zip_Code: userResponse.data[0].zip_Code,
+                            useremail: userResponse.data[0].email
                         });
                     }
                 } catch (err) {
@@ -239,13 +243,18 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 ) : (
                     <div className="col-md-7">
-                        <div style={{ margin: "0 0", color: checkUserId === 0 ? "black" : "white", background: checkUserId === 0 ? "white" : "lightseagreen" }} className="shadow rounded p-3">
+                    
                             {checkUserId.length === 0 ? (
+                                    <div style={{ margin: "0 0", color:  "white", background: "lightseagreen" }} className="shadow rounded p-3">
                                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
+                                </div>
                             ) : (
-                                <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.useremail}</p>
+                                <div style={{ margin: "0 0", color:"black", background:  "white" }} className="shadow rounded p-3">
+                                
+                                <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px" }} />{values.useremail}</p>
+                            </div>
                             )}
-                        </div>
+                        
                         {checkUserId.length === 0 ? (
                             !otpVerified ? (
                                 <div>
