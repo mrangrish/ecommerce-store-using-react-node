@@ -5,6 +5,8 @@ import 'react-phone-number-input/style.css';
 import { ToastContainer, toast } from 'react-toastify';
 import './Orderdetails.css';
 import { IoCheckmark } from 'react-icons/io5';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInr, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import 'react-toastify/dist/ReactToastify.css';
 
 function AuthUserOrder({ userId, setUserId }) {
@@ -25,6 +27,18 @@ function AuthUserOrder({ userId, setUserId }) {
     const [registerMessage, setRegisterMessage] = useState('');
     const [emailError, setEmailError] = useState('');
     const [addtocart, setAddtocart] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  
+    useEffect(() => {
+        const calculateTotalPrice = () => {
+            let totalPrice = 0;
+            addtocart.forEach(item => {
+                totalPrice += parseFloat(item.product_offerPrice || item.product_price) * parseInt(item.quantity || 1);
+            });
+            setTotalPrice(totalPrice);
+        };
+        calculateTotalPrice();
+    }, [addtocart]);
 
     useEffect(() => {
         const fetchUserId = async () => {
@@ -73,6 +87,16 @@ function AuthUserOrder({ userId, setUserId }) {
 
         fetchUserDetails();
     }, [otpVerified, userId]);
+
+    const getImageUrl = (jsonString) => {
+        try {
+            const images = JSON.parse(jsonString);
+            return `http://localhost:8081/images/${images[0]}`;
+        } catch (e) {
+            console.error('Error parsing image JSON:', e);
+            return '';
+        }
+    };
 
     useEffect(() => {
         const fetchAddtocartproduct = async () => {
@@ -160,6 +184,12 @@ function AuthUserOrder({ userId, setUserId }) {
         toast.error('Error verifying OTP: ' + error.message);
     }
 };
+
+
+       const calculateDiscountPercentage = (originalPrice, offerPrice) => {
+        const discountPercentage = ((originalPrice - offerPrice) / originalPrice) * 100;
+        return Math.round(discountPercentage);
+    };
 
 
     return (
@@ -318,12 +348,42 @@ function AuthUserOrder({ userId, setUserId }) {
                         <h4>Order Summary</h4>
                         {addtocart.length > 0 ? (
                             addtocart.map((item, index) => (
-                                <p key={index}>{item.product_name}: {item.product_price}</p>
+                                 <div className="row border-top border-bottom" key={index}>
+                                <div className="row main align-items-center">
+                                    <div className="col-4">
+                                        <img className="img-fluid p-2" src={getImageUrl(item.product_image)}  alt={item.product_name} />
+                                         
+                                        
+                                    </div>
+                                    <div className="col-2">
+                                    <div className="row text-muted text-center ">{item.product_brand}</div>
+                                        <div className="row text-center">{item.product_name}</div>
+                                    </div>
+                                    <div className="col-3">
+                                  
+                                        {item.product_offerPrice ? (
+                                            <>
+                                                <strike style={{ fontSize: "small" }}>&#8377;{(item.product_price * item.quantity).toFixed(2)}</strike>
+                                                <b>&#8377;{(item.product_offerPrice * item.quantity).toFixed(2)}</b>
+                                                <div className="text-success">{calculateDiscountPercentage(item.product_price, item.product_offerPrice)}% Off</div>
+                                            </>
+                                        ) : (
+                                            <b>&#8377;{(item.product_price * item.quantity).toFixed(2)}</b>
+                                        )}
+                                    </div>
+                                    <div className="col-2">
+                                   <p> Quantity:{item.quantity}</p>
+                                            </div>
+                                    
+                                  
+                                 
+                                </div>
+                            </div>
                             ))
                         ) : (
                             <p>No items in cart</p>
                         )}
-                        <p>Total: ${addtocart.reduce((total, item) => total + item.product_price, 0)}</p>
+                        <p>Total: &#8377;{totalPrice.toFixed(2)}</p>
                     </div>
                 </div>
             </div>
