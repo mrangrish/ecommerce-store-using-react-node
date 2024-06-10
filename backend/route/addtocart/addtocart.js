@@ -42,8 +42,6 @@ router.post('/cart', (req, res) => {
     }
 });
 
-
-
 router.get('/addtocartcount/:id', (req, res) => {
     const userId = req.params.id;
     const sql = "SELECT COUNT(*) AS count FROM addtocart WHERE user_id = ?";
