@@ -5,8 +5,6 @@ import 'react-phone-number-input/style.css';
 import { ToastContainer, toast } from 'react-toastify';
 import './Orderdetails.css';
 import { IoCheckmark } from 'react-icons/io5';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInr, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import 'react-toastify/dist/ReactToastify.css';
 
 function AuthUserOrder({ userId, setUserId }) {
@@ -27,7 +25,7 @@ function AuthUserOrder({ userId, setUserId }) {
     const [registerMessage, setRegisterMessage] = useState('');
     const [emailError, setEmailError] = useState('');
     const [addtocart, setAddtocart] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
 
     useEffect(() => {
         const calculateTotalPrice = () => {
@@ -158,35 +156,35 @@ function AuthUserOrder({ userId, setUserId }) {
     };
 
     const verifyOtp = async () => {
-    try {
-        const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
+        try {
+            const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
 
-        if (response.data.success) {
-            setOtpVerified(true);
-            setUserId(response.data.userId);
-            toast.success('OTP verified successfully!');
+            if (response.data.success) {
+                setOtpVerified(true);
+                setUserId(response.data.userId);
+                toast.success('OTP verified successfully!');
 
-            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-            
-            for (const item of cartItems) {
-                try {
-                    await axios.post(`http://localhost:8081/orderdetails/movecartItems`, { userId: response.data.userId, productId: item.productId, quantity: item.quantity });
-                } catch (error) {
-                    console.error('Error moving cart item:', error);
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+                for (const item of cartItems) {
+                    try {
+                        await axios.post(`http://localhost:8081/orderdetails/movecartItems`, { userId: response.data.userId, productId: item.productId, quantity: item.quantity });
+                    } catch (error) {
+                        console.error('Error moving cart item:', error);
+                    }
                 }
+
+                localStorage.removeItem('cartItems');
+            } else {
+                toast.error('OTP verification failed.');
             }
-
-            localStorage.removeItem('cartItems');
-        } else {
-            toast.error('OTP verification failed.');
+        } catch (error) {
+            toast.error('Error verifying OTP: ' + error.message);
         }
-    } catch (error) {
-        toast.error('Error verifying OTP: ' + error.message);
-    }
-};
+    };
 
 
-       const calculateDiscountPercentage = (originalPrice, offerPrice) => {
+    const calculateDiscountPercentage = (originalPrice, offerPrice) => {
         const discountPercentage = ((originalPrice - offerPrice) / originalPrice) * 100;
         return Math.round(discountPercentage);
     };
@@ -348,42 +346,42 @@ function AuthUserOrder({ userId, setUserId }) {
                         <h4>Order Summary</h4>
                         {addtocart.length > 0 ? (
                             addtocart.map((item, index) => (
-                                 <div className="row border-top border-bottom" key={index}>
-                                <div className="row main align-items-center">
-                                    <div className="col-4">
-                                        <img className="img-fluid p-2" src={getImageUrl(item.product_image)}  alt={item.product_name} />
-                                         
-                                        
+                                <div className="row border-top border-bottom" key={index}>
+                                    <div className="row main align-items-center">
+                                        <div className="col-4">
+                                            <img className="img-fluid p-2" src={getImageUrl(item.product_image)} alt={item.product_name} />
+
+
+                                        </div>
+                                        <div className="col-2">
+                                            <div className="row text-muted text-center ">{item.product_brand}</div>
+                                            <div className="row text-center">{item.product_name}</div>
+                                        </div>
+                                        <div className="col-3">
+
+                                            {item.product_offerPrice ? (
+                                                <>
+                                                    <strike style={{ fontSize: "small" }}>&#8377;{(item.product_price * item.quantity).toFixed(2)}</strike>
+                                                    <b>&#8377;{(item.product_offerPrice * item.quantity).toFixed(2)}</b>
+                                                    <div className="text-success">{calculateDiscountPercentage(item.product_price, item.product_offerPrice)}% Off</div>
+                                                </>
+                                            ) : (
+                                                <b>&#8377;{(item.product_price * item.quantity).toFixed(2)}</b>
+                                            )}
+                                        </div>
+                                        <div className="col-2">
+                                            <p> Quantity:{item.quantity}</p>
+                                        </div>
+
+
+
                                     </div>
-                                    <div className="col-2">
-                                    <div className="row text-muted text-center ">{item.product_brand}</div>
-                                        <div className="row text-center">{item.product_name}</div>
-                                    </div>
-                                    <div className="col-3">
-                                  
-                                        {item.product_offerPrice ? (
-                                            <>
-                                                <strike style={{ fontSize: "small" }}>&#8377;{(item.product_price * item.quantity).toFixed(2)}</strike>
-                                                <b>&#8377;{(item.product_offerPrice * item.quantity).toFixed(2)}</b>
-                                                <div className="text-success">{calculateDiscountPercentage(item.product_price, item.product_offerPrice)}% Off</div>
-                                            </>
-                                        ) : (
-                                            <b>&#8377;{(item.product_price * item.quantity).toFixed(2)}</b>
-                                        )}
-                                    </div>
-                                    <div className="col-2">
-                                   <p> Quantity:{item.quantity}</p>
-                                            </div>
-                                    
-                                  
-                                 
                                 </div>
-                            </div>
                             ))
                         ) : (
                             <p>No items in cart</p>
                         )}
-                        <p>Total: &#8377; {totalPrice.toFixed(2)}</p>
+                        <p>Total: &#8377;{totalPrice.toFixed(2)}</p>
                     </div>
                 </div>
             </div>
