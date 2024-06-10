@@ -134,20 +134,33 @@ function AuthUserOrder({ userId, setUserId }) {
     };
 
     const verifyOtp = async () => {
-        try {
-            const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
+    try {
+        const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
 
-            if (response.data.success) {
-                setOtpVerified(true);
-                setUserId(response.data.userId);
-                toast.success('OTP verified successfully!');
-            } else {
-                toast.error('OTP verification failed.');
+        if (response.data.success) {
+            setOtpVerified(true);
+            setUserId(response.data.userId);
+            toast.success('OTP verified successfully!');
+
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            
+            for (const item of cartItems) {
+                try {
+                    await axios.post(`http://localhost:8081/orderdetails/movecartItems`, { userId: response.data.userId, productId: item.productId, quantity: item.quantity });
+                } catch (error) {
+                    console.error('Error moving cart item:', error);
+                }
             }
-        } catch (error) {
-            toast.error('Error verifying OTP: ' + error.message);
+
+            localStorage.removeItem('cartItems');
+        } else {
+            toast.error('OTP verification failed.');
         }
-    };
+    } catch (error) {
+        toast.error('Error verifying OTP: ' + error.message);
+    }
+};
+
 
     return (
         <div className="container mt-5">
@@ -198,7 +211,7 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 ) : (
                     <div className="col-md-7">
-                        <div style={{ margin: "0 0", color: checkUserId ? "black" : "white", background: checkUserId ? "white" : "lightseagreen" }} className="shadow rounded p-3">
+                        <div style={{ margin: "0 0", color: checkUserId === 0 ? "black" : "white", background: checkUserId === 0 ? "white" : "lightseagreen" }} className="shadow rounded p-3">
                             {checkUserId.length === 0 ? (
                                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
                             ) : (
@@ -305,12 +318,12 @@ function AuthUserOrder({ userId, setUserId }) {
                         <h4>Order Summary</h4>
                         {addtocart.length > 0 ? (
                             addtocart.map((item, index) => (
-                                <p key={index}>{item.product_name}: ${item.product_price}</p>
+                                <p key={index}>{item.product_name}: {item.product_price}</p>
                             ))
                         ) : (
                             <p>No items in cart</p>
                         )}
-                        <p>Total: ${addtocart.reduce((total, item) => total + item.price, 0)}</p>
+                        <p>Total: ${addtocart.reduce((total, item) => total + item.product_price, 0)}</p>
                     </div>
                 </div>
             </div>
