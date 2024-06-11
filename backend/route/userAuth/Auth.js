@@ -39,7 +39,7 @@ passport.use(new GoogleStrategy({
                     const user = result[0];
                     return done(null, user);
                 } else {
-                    const newUser = { name, email, password: '',  created_at };
+                    const newUser = { name, email, password: '', created_at };
                     db.query('INSERT INTO user SET ?', newUser, (err, result) => {
                         if (err) return done(err);
                         newUser.id = result.insertId;
@@ -81,61 +81,61 @@ router.get('/auth/google/callback',
 
 router.post('/signup', (req, res) => {
     const { name, email, password, phone } = req.body;
-  
+
     const checkPhoneQuery = "SELECT * FROM user WHERE phone = ?";
     db.query(checkPhoneQuery, [phone], (err, result) => {
-        if(err) {
+        if (err) {
             console.error('Error checking phone number existence:', err);
-            return res.status(500).json({error: 'Error checking phone existence '});
-        } 
+            return res.status(500).json({ error: 'Error checking phone existence ' });
+        }
         if (result.length > 0) {
             return res.status(401).json({ error: 'Phone number already exists' });
-        
-          }
-    const checkEmailQuery = "SELECT * FROM user WHERE email = ?";
-    db.query(checkEmailQuery, [email], (err, result) => {
-      if (err) {
-        console.error('Error checking email existence:', err);
-        return res.status(500).json({ error: 'Error checking email existence' });
-      }
-      if (result.length > 0) {
-        return res.status(400).json({ error: 'Email already exists' });
-      }
 
-      bcrypt.genSalt(10, (err, salt) => {
-        if (err) {
-          console.error('Error generating salt:', err);
-          return res.status(500).json({ error: 'Error generating salt' });
         }
-        bcrypt.hash(password, salt, (err, hash) => {
-          if (err) {
-            console.error('Error hashing password:', err);
-            return res.status(500).json({ error: 'Error hashing password' });
-          }
-
-          const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          const insertUserQuery = "INSERT INTO user (name, email, password, phone, created_at) VALUES (?, ?, ?, ?, ?)";
-          const values = [name, email, hash, phone, currentDateTime];
-  
-          db.query(insertUserQuery, values, (err, result) => {
+        const checkEmailQuery = "SELECT * FROM user WHERE email = ?";
+        db.query(checkEmailQuery, [email], (err, result) => {
             if (err) {
-              console.error('Error inserting user into database:', err);
-              return res.status(500).json({ error: 'Error creating user' });
+                console.error('Error checking email existence:', err);
+                return res.status(500).json({ error: 'Error checking email existence' });
             }
-        
-            req.session.userId = result.insertId;
-            // console.log(req.session.userId);
-        
-            return res.status(200).json({ message: 'register successfully' }); 
-          });
+            if (result.length > 0) {
+                return res.status(400).json({ error: 'Email already exists' });
+            }
+
+            bcrypt.genSalt(10, (err, salt) => {
+                if (err) {
+                    console.error('Error generating salt:', err);
+                    return res.status(500).json({ error: 'Error generating salt' });
+                }
+                bcrypt.hash(password, salt, (err, hash) => {
+                    if (err) {
+                        console.error('Error hashing password:', err);
+                        return res.status(500).json({ error: 'Error hashing password' });
+                    }
+
+                    const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                    const insertUserQuery = "INSERT INTO user (name, email, password, phone, created_at) VALUES (?, ?, ?, ?, ?)";
+                    const values = [name, email, hash, phone, currentDateTime];
+
+                    db.query(insertUserQuery, values, (err, result) => {
+                        if (err) {
+                            console.error('Error inserting user into database:', err);
+                            return res.status(500).json({ error: 'Error creating user' });
+                        }
+
+                        req.session.userId = result.insertId;
+                        // console.log(req.session.userId);
+
+                        return res.status(200).json({ message: 'register successfully' });
+                    });
+                });
+            });
         });
-        });
-      });
     });
-  });
+});
 
 
-  router.post('/login', [
+router.post('/login', [
     check('email').isEmail(),
     check('password').isLength({ min: 6 })
 ], (req, res) => {

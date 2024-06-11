@@ -53,7 +53,7 @@ function AuthUserOrder({ userId, setUserId }) {
                             zip_Code: userResponse.data[0].zip_Code,
                             useremail: userResponse.data[0].email
                         });
-        
+
                     }
                 }
             } catch (err) {
@@ -151,10 +151,12 @@ function AuthUserOrder({ userId, setUserId }) {
             })
             .catch(error => {
                 if (error.response && error.response.status === 400) {
+                    console.log('email not found, please register first');
                     setRegisterMessage('Email not found, please register first');
                 } else {
                     toast.error('Error sending OTP. Please try again.');
                 }
+                // console.error('Error sending OTP. Please try again', error)
             });
     };
 
@@ -186,6 +188,7 @@ function AuthUserOrder({ userId, setUserId }) {
         }
     };
 
+    
 
     const calculateDiscountPercentage = (originalPrice, offerPrice) => {
         const discountPercentage = ((originalPrice - offerPrice) / originalPrice) * 100;
@@ -193,6 +196,29 @@ function AuthUserOrder({ userId, setUserId }) {
     };
 
 
+    const handleRegisterSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            // Send registration data to the backend
+            const response = await axios.post('http://localhost:8081/mailverified/insertuser', {
+                name: values.name,
+                email: email,
+                password: values.password
+            }, { withCredentials: true });
+            if (response.data.message === 'Register successfully') {
+                toast.success(response.data.message);
+                setUserId(response.data.userId);
+            } else {
+                toast.error('Registration failed');
+            }
+        } catch (error) {
+            console.error('Error registering user:', error);
+            toast.error('Error registering user');
+        }
+    };
+
+
+    
     return (
         <div className="container mt-5">
             <div className="row justify-content-center">
@@ -208,52 +234,46 @@ function AuthUserOrder({ userId, setUserId }) {
                     pauseOnHover
                 />
                 {registerMessage ? (
-                    <div className="col-md-6">
-                        <div className="row">
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
-                                <input type="email" className="form-control text-muted" value={email} />
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="exampleInputName">Name*</label>
-                                <input type="text" className="form-control text-muted" />
-                            </div>
-                            <div className="col-md-6 mb-3 mt-3">
-                                <label htmlFor="exampleInputpassword">Password*</label>
-                                <input type="password" className="form-control text-muted" />
-                            </div>
-                            <div className="col-md-6 mb-3 mt-3">
-                                <label htmlFor="exampleInputaddress">Phone*</label>
-                                <PhoneInput value={values.phone} defaultCountry="IN" onChange={(value) => handleInputChange('phone', value)} ref={ref} placeholder="Enter Your Mobile number" />
-                            </div>
-                            <div className="col-md-6 mb-3 mt-3">
-                                <label htmlFor="exampleInputaddress">Address*</label>
-                                <input type="text" className="form-control text-muted"></input>
-                            </div>
-                            <div className="col-md-6 mb-3 mt-3">
-                                <label htmlFor="exampleInputCity" className="form-label text-muted">Town/City</label>
-                                <input type="text" className="form-control text-muted" />
-                            </div>
-                            <div className="col-md-6 mb-3 mt-3">
-                                <label htmlFor="exampleInputPostcode" className="form-label text-muted">Postcode / ZIP*</label>
-                                <input type="text" className="form-control text-muted" />
-                            </div>
-                        </div>
+                    <div className="col-md-7">
+                    <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
+                        <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
                     </div>
+                    <div style={{ background: "lightgrey", padding: "3% 4%" }}>
+                        <form onSubmit={handleRegisterSubmit}> 
+                            <div className="row">
+                                <div className=" mt-3 col-6">
+                                    <label htmlFor="exampleInputName">Name*</label>
+                                    <input type="text" name="name" className="form-control text-muted input" value={values.name} onChange={(e) => setValues({...values, name: e.target.value})} />
+                                </div>
+                                <div className="mt-3 col-6">
+                                    <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
+                                    <input type="email" className="form-control text-muted input" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="mb-3 mt-3 col-6">
+                                    <label htmlFor="exampleInputpassword">Password*</label>
+                                    <input type="password" className="form-control text-muted input" value={values.password} onChange={(e) => setValues({...values, password: e.target.value})} />
+                                </div>
+                            </div>
+                            <button type="submit" className="btn btn-warning">Submit</button>
+                        </form>
+                    </div>
+                </div>
                 ) : (
                     <div className="col-md-7">
-                    
-                            {checkUserId.length === 0 ? (
-                                    <div style={{ margin: "0 0", color:  "white", background: "lightseagreen" }} className="shadow rounded p-3">
+
+                        {checkUserId.length === 0 ? (
+                            <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
                                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
-                                </div>
-                            ) : (
-                                <div style={{ margin: "0 0", color:"black", background:  "white" }} className="shadow rounded p-3">
-                                
+                            </div>
+                        ) : (
+                            <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
+
                                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}><IoCheckmark style={{ color: "green", fontSize: "33px" }} />{values.useremail}</p>
                             </div>
-                            )}
-                        
+                        )}
+
                         {checkUserId.length === 0 ? (
                             !otpVerified ? (
                                 <div>
@@ -285,7 +305,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                 <button onClick={verifyOtp} className="btn btn-success">Verify OTP</button>
                                             </div>
                                         )}
-                                    </div>
+                                    </div>  
                                     <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
                                         Address Details
                                     </div>
@@ -350,50 +370,33 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 )}
                 <div className="col-5">
-                    <div className="order-summary">
-                        <h4>Order Summary</h4>
-                        {addtocart.length > 0 ? (
-                            addtocart.map((item, index) => (
-                                <div className="row border-top border-bottom" key={index}>
-                                    <div className="row main align-items-center">
-                                        <div className="col-4">
-                                            <img className="img-fluid p-2" src={getImageUrl(item.product_image)} alt={item.product_name} />
-
-
-                                        </div>
-                                        <div className="col-2">
-                                            <div className="row text-muted text-center ">{item.product_brand}</div>
-                                            <div className="row text-center">{item.product_name}</div>
-                                        </div>
-                                        <div className="col-3">
-
-                                            {item.product_offerPrice ? (
-                                                <>
-                                                    <strike style={{ fontSize: "small" }}>&#8377;{(item.product_price * item.quantity).toFixed(2)}</strike>
-                                                    <b>&#8377;{(item.product_offerPrice * item.quantity).toFixed(2)}</b>
-                                                    <div className="text-success">{calculateDiscountPercentage(item.product_price, item.product_offerPrice)}% Off</div>
-                                                </>
-                                            ) : (
-                                                <b>&#8377;{(item.product_price * item.quantity).toFixed(2)}</b>
-                                            )}
-                                        </div>
-                                        <div className="col-2">
-                                            <p> Quantity:{item.quantity}</p>
-                                        </div>
-
-
-
+                <div className="shadow p-4 rounded bg-light">
+                            <h4>Cart Items</h4>
+                            <hr/>
+                            {addtocart.map((item, index) => (
+                                <div key={index} className="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <img src={getImageUrl(item.product_image)} alt={item.product_name} width="50" />
+                                        <span className="ms-3">{item.product_name}</span>
+                                    </div>
+                                    <div>
+                                        <span>{item.quantity} x ₹{item.product_offerPrice || item.product_price}</span>
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <p>No items in cart</p>
-                        )}
-                        <p>Total: &#8377;{totalPrice.toFixed(2)}</p>
+                            ))}
+                            <hr/>
+                            <div className="d-flex justify-content-between align-items-center">
+
+                                <h5>Total Price</h5>
+                                
+                                <h5>₹{totalPrice.toFixed(2)}</h5>
+                            </div>
+                        </div>
+            
                     </div>
                 </div>
             </div>
-        </div>
+
     );
 }
 
