@@ -29,17 +29,7 @@ const transporter = nodemailer.createTransport({
 
 router.post('/send-email-otp', (req, res) => {
     const { email } = req.body;
-    const sql = "SELECT * FROM user WHERE email = ? AND role_as = 0";
-
-    db.query(sql, [email], (error, results) => {
-        if (error) {
-            console.error("Error querying database:", error);
-            res.status(500).send({ success: false, error: "Database error" });
-        } else if (results.length === 0) {
-            // Email not found, prompt user to register first
-            return res.status(400).json({ error: 'user is not register' });
-        } else {
-            // Email found, generate OTP and send email
+    
             const otp = Math.floor(100000 + Math.random() * 900000);
             const mailOptions = {
                 from: SMTP_MAIL,
@@ -57,9 +47,7 @@ router.post('/send-email-otp', (req, res) => {
                     res.status(200).send({ success: true });
                 }
             });
-        }
-    });
-});
+        });
 
 
 router.post('/verify-email-otp', (req, res) => {
@@ -73,7 +61,7 @@ router.post('/verify-email-otp', (req, res) => {
                 console.error("Error querying database:", error);
                 res.status(500).send({ success: false, error: "Database error" });
             } else if (results.length === 0) {
-                res.status(404).send({ success: false, error: "User not found" });
+                return res.status(400).json({ error: 'user is not register' });
             } else {
                 const userId = results[0].id;
                 // Set the user ID in the session
