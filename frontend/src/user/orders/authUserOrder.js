@@ -60,7 +60,6 @@ function AuthUserOrder({ userId, setUserId }) {
                 console.error('Error fetching user data:', err);
             }
         };
-
         fetchUserId();
     }, []);
 
