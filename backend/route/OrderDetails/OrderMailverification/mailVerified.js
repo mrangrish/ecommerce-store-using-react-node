@@ -7,7 +7,7 @@ const router = express.Router();
 const app = express();
 const db = require('/Users/Kuroit kappa/Desktop/reactjs/ecomm/backend/route/db');
 const otpStorage = {};
-
+const bcrypt = require('bcryptjs');
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -19,7 +19,7 @@ const SMTP_HOST = 'smtp.gmail.com';
 const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: true, 
+    secure: true,
     auth: {
         user: SMTP_MAIL,
         pass: SMTP_PASSWORD
@@ -85,6 +85,56 @@ router.post('/verify-email-otp', (req, res) => {
     } else {
         res.status(400).send({ success: false, message: 'OTP verification failed' });
     }
+});
+
+router.post('/insertuser', (req, res) => {
+    const { name, email, password } = req.body;
+
+    const checkEmailQuery = "SELECT * FROM user WHERE email = ?";
+    db.query(checkEmailQuery, [email], (err, result) => {
+        if (err) {
+            console.error('Error checking email existence:', err);
+            return res.status(500).json({ error: 'Error checking email existence' });
+        }
+        if (result.length > 0) {
+            return res.status(400).json({ error: 'Email already exists' });
+        }
+
+        bcrypt.genSalt(10, (err, salt) => {
+            if (err) {
+                console.error('Error generating salt:', err);
+                return res.status(500).json({ error: 'Error generating salt' });
+            }
+            bcrypt.hash(password, salt, (err, hash) => {
+                if (err) {
+                    console.error('Error hashing password:', err);
+                    return res.status(500).json({ error: 'Error hashing password' });
+                }
+
+                const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                const insertUserQuery = "INSERT INTO user (name, email, password, created_at) VALUES (?, ?, ?, ?)";
+                const values = [name, email, hash, currentDateTime];
+
+                db.query(insertUserQuery, values, (err, result) => {
+                    if (err) {
+                        console.error('Error inserting user into database:', err);
+                        return res.status(500).json({ error: 'Error creating user' });
+                    }
+
+                    req.session.userId = result.insertId;
+                    console.log('Session userId set:', req.session.userId);
+
+                    req.session.save((saveErr) => {
+                        if (saveErr) {
+                            console.error('Error saving session:', saveErr);
+                            return res.status(500).json({ error: 'Error saving session' });
+                        }
+                        return res.status(200).json({ message: 'Register successfully', userId: req.session.userId });
+                    });
+                });
+            });
+        });
+    });
 });
 
 
