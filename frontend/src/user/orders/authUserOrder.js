@@ -166,7 +166,7 @@ function AuthUserOrder({ userId, setUserId }) {
 
             if (response.data.success) {
                 setOtpVerified(true);
-                setUserId(response.data.userId);
+            
                 toast.success('OTP verified successfully!');
 
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -181,18 +181,17 @@ function AuthUserOrder({ userId, setUserId }) {
 
                 localStorage.removeItem('cartItems');
             } else {
+
                 toast.error('OTP verification failed.');
             }
         } catch (error) {
-            toast.error('Error verifying OTP: ' + error.message);
+            if (error.response && error.response.status === 400) {
+                console.log('email not found, please register first');
+                setRegisterMessage('Email not found, please register first');
+            } else {
+                toast.error('Error verifying OTP: ' + error.message);
+            }
         }
-    };
-
-    
-
-    const calculateDiscountPercentage = (originalPrice, offerPrice) => {
-        const discountPercentage = ((originalPrice - offerPrice) / originalPrice) * 100;
-        return Math.round(discountPercentage);
     };
 
 
@@ -205,9 +204,25 @@ function AuthUserOrder({ userId, setUserId }) {
                 email: email,
                 password: values.password
             }, { withCredentials: true });
+    
             if (response.data.message === 'Register successfully') {
-                toast.success(response.data.message);
                 setUserId(response.data.userId);
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                for (const item of cartItems) {
+                    try {
+                        await axios.post(`http://localhost:8081/orderdetails/movecartItems`, {
+                            userId: response.data.userId,
+                            productId: item.productId,
+                            quantity: item.quantity
+                        });
+                    } catch (error) {
+                        console.error('Error moving cart item:', error);
+                    }
+                }
+    
+                // Clear localStorage cart items
+                localStorage.removeItem('cartItems');
+    
             } else {
                 toast.error('Registration failed');
             }
@@ -216,9 +231,10 @@ function AuthUserOrder({ userId, setUserId }) {
             toast.error('Error registering user');
         }
     };
-
-
     
+
+
+
     return (
         <div className="container mt-5">
             <div className="row justify-content-center">
@@ -235,31 +251,34 @@ function AuthUserOrder({ userId, setUserId }) {
                 />
                 {registerMessage ? (
                     <div className="col-md-7">
-                    <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
-                        <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
+                        <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
+                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
+                        </div>
+                        <div style={{ background: "lightgrey", padding: "3% 4%" }}>
+                            <form onSubmit={handleRegisterSubmit}>
+                                <div className="row">
+                                    <div className=" mt-3 col-6">
+                                        <label htmlFor="exampleInputName">Name*</label>
+                                        <input type="text" name="name" className="form-control text-muted input" value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })} />
+                                    </div>
+                                    <div className="mt-3 col-6">
+                                        <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
+                                        <input type="email" className="form-control text-muted input" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="mb-3 mt-3 col-6">
+                                        <label htmlFor="exampleInputpassword">Password*</label>
+                                        <input type="password" className="form-control text-muted input" value={values.password} onChange={(e) => setValues({ ...values, password: e.target.value })} />
+                                    </div>
+                                </div>
+                                <button type="submit" className="btn btn-warning">Submit</button>
+                            </form>
+                        </div>
+                        <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
+                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Address Details</p>
+                        </div>
                     </div>
-                    <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                        <form onSubmit={handleRegisterSubmit}> 
-                            <div className="row">
-                                <div className=" mt-3 col-6">
-                                    <label htmlFor="exampleInputName">Name*</label>
-                                    <input type="text" name="name" className="form-control text-muted input" value={values.name} onChange={(e) => setValues({...values, name: e.target.value})} />
-                                </div>
-                                <div className="mt-3 col-6">
-                                    <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
-                                    <input type="email" className="form-control text-muted input" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="mb-3 mt-3 col-6">
-                                    <label htmlFor="exampleInputpassword">Password*</label>
-                                    <input type="password" className="form-control text-muted input" value={values.password} onChange={(e) => setValues({...values, password: e.target.value})} />
-                                </div>
-                            </div>
-                            <button type="submit" className="btn btn-warning">Submit</button>
-                        </form>
-                    </div>
-                </div>
                 ) : (
                     <div className="col-md-7">
 
@@ -292,6 +311,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                             {!otpSent && (
                                                 <button onClick={sendOtp} className="btn btn-warning">Submit</button>
                                             )}
+
                                         </div>
                                         {otpSent && !otpVerified && (
                                             <div className="mb-3">
@@ -305,7 +325,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                 <button onClick={verifyOtp} className="btn btn-success">Verify OTP</button>
                                             </div>
                                         )}
-                                    </div>  
+                                    </div>
                                     <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
                                         Address Details
                                     </div>
@@ -370,32 +390,32 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 )}
                 <div className="col-5">
-                <div className="shadow p-4 rounded bg-light">
-                            <h4>Cart Items</h4>
-                            <hr/>
-                            {addtocart.map((item, index) => (
-                                <div key={index} className="d-flex justify-content-between align-items-center mb-3">
-                                    <div>
-                                        <img src={getImageUrl(item.product_image)} alt={item.product_name} width="50" />
-                                        <span className="ms-3">{item.product_name}</span>
-                                    </div>
-                                    <div>
-                                        <span>{item.quantity} x ₹{item.product_offerPrice || item.product_price}</span>
-                                    </div>
+                    <div className="shadow p-4 rounded bg-light">
+                        <h4>Cart Items</h4>
+                        <hr />
+                        {addtocart.map((item, index) => (
+                            <div key={index} className="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <img src={getImageUrl(item.product_image)} alt={item.product_name} width="50" />
+                                    <span className="ms-3">{item.product_name}</span>
                                 </div>
-                            ))}
-                            <hr/>
-                            <div className="d-flex justify-content-between align-items-center">
-
-                                <h5>Total Price</h5>
-                                
-                                <h5>₹{totalPrice.toFixed(2)}</h5>
+                                <div>
+                                    <span>{item.quantity} x ₹{item.product_offerPrice || item.product_price}</span>
+                                </div>
                             </div>
+                        ))}
+                        <hr />
+                        <div className="d-flex justify-content-between align-items-center">
+
+                            <h5>Total Price</h5>
+
+                            <h5>₹{totalPrice.toFixed(2)}</h5>
                         </div>
-            
                     </div>
+
                 </div>
             </div>
+        </div>
 
     );
 }
