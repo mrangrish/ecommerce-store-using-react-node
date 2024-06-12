@@ -39,7 +39,13 @@ passport.use(new GoogleStrategy({
                     const user = result[0];
                     return done(null, user);
                 } else {
-                    const newUser = { name, email, password: '', created_at };
+                    const newUser = {
+                        name,
+                        email,
+                        password: '',
+                        google_login: 1,
+                        created_at        
+                    };
                     db.query('INSERT INTO user SET ?', newUser, (err, result) => {
                         if (err) return done(err);
                         newUser.id = result.insertId;
@@ -114,8 +120,8 @@ router.post('/signup', (req, res) => {
                     }
 
                     const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                    const insertUserQuery = "INSERT INTO user (name, email, password, phone, created_at) VALUES (?, ?, ?, ?, ?)";
-                    const values = [name, email, hash, phone, currentDateTime];
+                    const insertUserQuery = "INSERT INTO user (name, email, password, password_view, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+                    const values = [name, email, hash, password, phone, currentDateTime];
 
                     db.query(insertUserQuery, values, (err, result) => {
                         if (err) {
