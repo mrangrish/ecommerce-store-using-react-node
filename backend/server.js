@@ -52,13 +52,14 @@ app.use('/mailverified', mailVerified);
 
 app.get('/session', (req, res) => {
     if (req.session.userId) {
-        console.log(req.session.userId);
+        // console.log(req.session.userId);
         return res.json({ userId: req.session.userId });
     } else {
         
-        console.log(null);
+        // console.log(null);
         return res.json({ userId: null });
     }
+
 });
 
 app.listen(8081, () => {
