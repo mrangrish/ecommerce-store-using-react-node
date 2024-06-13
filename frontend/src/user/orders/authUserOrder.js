@@ -30,25 +30,30 @@ function AuthUserOrder({ userId, setUserId }) {
     const [emailError, setEmailError] = useState('');
     const [newuserOtp, setNewuserOtp] = useState(false);
     const [errors, setErrors] = useState({});
-
+    const [addressdetails, setAddressdetails] = useState([]);
     useEffect(() => {
         const fetchUserId = async () => {
             try {
                 const response = await axios.get(`http://localhost:8081/session`, { withCredentials: true });
                 if (response.data.userId) {
-                    const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${response.data.userId}`);
-                    setCheckUserId(userResponse.data);
-                
-                    if (userResponse.data.length > 0) {
-                        setValues({
-                            phone: userResponse.data[0].phone,
-                            Address: userResponse.data[0].Address,
-                            City: userResponse.data[0].City,
-                            zip_Code: userResponse.data[0].zip_Code,
-                            useremail: userResponse.data[0].email,
-                            name: userResponse.data[0].name,
-                            password_view: userResponse.data.password_view
-                        });
+                    const userCheckId = await axios.get(`http://localhost:8081/orderdetails/checkuser/${response.data.userId}`);
+                    setCheckUserId(userCheckId.data);
+                    if(userCheckId.data){
+                        const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${response.data.userId}`);
+                        setAddressdetails(userResponse.data);
+                        console.log(userResponse);
+                        
+                        if (userResponse.data.length > 0) {
+                            setValues({
+                                phone: userResponse.data[0].phone,
+                                Address: userResponse.data[0].Address,
+                                City: userResponse.data[0].City,
+                                zip_Code: userResponse.data[0].zip_Code,
+                                useremail: userResponse.data[0].email,
+                                name: userResponse.data[0].name,
+                                password_view: userResponse.data.password_view
+                            });
+                        }
                     }
                 }
             } catch (err) {
@@ -65,7 +70,7 @@ function AuthUserOrder({ userId, setUserId }) {
                 try {
                     const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${userId}`);
                     setCheckUserId(userResponse.data);
-                    
+                      
                     if (userResponse.data.length > 0) {
                         setValues({
                             phone: userResponse.data[0].phone,
@@ -77,6 +82,7 @@ function AuthUserOrder({ userId, setUserId }) {
                             password_view: userResponse.data[0].Password_view
 
                         });
+                    
                     }
                 } catch (err) {
                     console.error('Error fetching user details:', err);
@@ -93,13 +99,13 @@ function AuthUserOrder({ userId, setUserId }) {
         setErrors(err);
         console.log(err);
         if (err.phone === "" && err.Address === "" && err.City === "" && err.zip_Code === "") {
-        try {
-            await axios.put(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
-            setCheckUserId(prevState => prevState.map(item => item.id === userId ? { ...item, ...values } : item));
-        } catch (err) {
-            console.error('Error updating phone number:', err);
+            try {
+                await axios.put(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
+                setCheckUserId(prevState => prevState.map(item => item.id === userId ? { ...item, ...values } : item));
+            } catch (err) {
+                console.error('Error updating phone number:', err);
+            }
         }
-    }
     };
 
     const handleInputChange = (name, value) => {
@@ -248,7 +254,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                 {errors.password_view && <span className='text-danger'>{errors.password_view}</span>}
                             </div>
                             <button type="submit" className="btn btn-warning" onClick={handleUpdateDetails}>Update Details</button>
-                            
+
                         </div>
                         <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
                             Address Details
@@ -298,7 +304,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                 />
                                                 <button onClick={verifynewuserOtp} className="btn btn-success">Verify OTP</button>
                                             </div>
-                                        )}
+                                        )} 
                                         {otpSent && !otpVerified && (
                                             <div className="mb-3">
                                                 <label htmlFor="exampleInputOtp" className="form-label text-muted">Enter OTP*</label>
@@ -382,7 +388,7 @@ function AuthUserOrder({ userId, setUserId }) {
                     </div>
                 )}
                 <div className="col-5">
-                <OrderSummary userId={userId} setUserId={setUserId} />
+                    <OrderSummary userId={userId} setUserId={setUserId} />
                 </div>
             </div>
         </div>
