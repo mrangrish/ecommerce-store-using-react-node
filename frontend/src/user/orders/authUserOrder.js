@@ -31,8 +31,6 @@ function AuthUserOrder({ userId, setUserId }) {
     const [newuserOtp, setNewuserOtp] = useState(false);
     const [errors, setErrors] = useState({});
 
-
-
     useEffect(() => {
         const fetchUserId = async () => {
             try {
@@ -344,6 +342,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     type="text"
                                                     className="form-control input text-muted"
                                                     value={values.Address}
+                                                    placeholder="Enter Your Address"
                                                     onChange={(e) => handleInputChange('Address', e.target.value)}
                                                 />
                                                 {errors.Address && <span className='text-danger'>{errors.Address}</span>}
@@ -356,6 +355,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     type="text"
                                                     className="form-control input text-muted"
                                                     value={values.City}
+                                                    placeholder="Enter Your City"
                                                     onChange={(e) => handleInputChange('City', e.target.value)}
                                                 />
                                                 {errors.City && <span className='text-danger'>{errors.City}</span>}
@@ -366,14 +366,14 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     type="text"
                                                     className="form-control input text-muted"
                                                     value={values.zip_Code}
+                                                    placeholder="Enter Your Zip_code"
                                                     onChange={(e) => handleInputChange('zip_Code', e.target.value)}
                                                 />
                                                 {errors.zip_Code && <span className='text-danger'>{errors.zip_Code}</span>}
                                             </div>
                                         </div>
                                         <div className="form-group mt-3">
-                                            <button className="btn btn-danger" onClick={handleSubmit}>Change</button>
-                                            <button className="btn btn-primary">Next</button>
+                                            <button className="btn btn-primary" onClick={handleSubmit}>Next</button>
                                         </div>
                                     </div>
                                 </div>
