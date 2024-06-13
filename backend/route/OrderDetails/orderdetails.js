@@ -18,9 +18,20 @@ router.get('/orderUserId/:userId', (req, res) => {
             let sql;
 
             if (hasOrderAddress) {
-                sql = `SELECT user.id, user.name, user.email, user.phone, user.role_as, order_address.Address, order_address.user_id, order_address.City, order_address.zip_Code, order_address.id as orderAddress_id FROM user INNER JOIN order_address ON order_address.user_id = user.id WHERE user.id = ?`;
+                sql = `SELECT user.id, user.name, user.email, user.phone, user.role_as, 
+                              COALESCE(order_address.Address, '') AS Address, 
+                              order_address.user_id, 
+                              COALESCE(order_address.City, '') AS City, 
+                              COALESCE(order_address.zip_Code, '') AS zip_Code, 
+                              order_address.id as orderAddress_id 
+                       FROM user 
+                       INNER JOIN order_address ON order_address.user_id = user.id 
+                       WHERE user.id = ?`;
             } else {
-                sql = `SELECT * FROM user WHERE user.id = ?`;
+                sql = `SELECT id, name, email, phone, role_as, 
+                              '' AS Address, '' AS City, '' AS zip_Code 
+                       FROM user 
+                       WHERE user.id = ?`;
             }
 
             db.query(sql, [userId], (err, product) => {
