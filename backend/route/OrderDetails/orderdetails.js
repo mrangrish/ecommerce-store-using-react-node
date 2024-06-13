@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const bcrypt = require('bcryptjs');
 
 router.get('/orderUserId/:userId', (req, res) => {
     try {
@@ -27,7 +28,7 @@ router.get('/orderUserId/:userId', (req, res) => {
                     console.log('Error fetching user:', err);
                     return res.status(500).json({ error: 'Error Fetching User' });
                 }
-                
+
                 res.status(200).json(product);
             });
         });
@@ -101,11 +102,39 @@ router.post('/movecartItems', (req, res) => {
             }
             res.status(201).json({ message: 'Added to cart successfully' });
         });
-    
+
     } catch (error) {
         console.error('Error in movecartItems endpoint:', error);
         res.status(500).send(error);
     }
+});
+
+router.put('/updateDetails/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const { password_view, name } = req.body;
+
+    bcrypt.genSalt(10, (err, salt) => {
+        if (err) {
+            console.error('Error generating salt:', err);
+            return res.status(500).json({ error: 'Error generating salt' });
+        }
+        bcrypt.hash(password_view, salt, (err, hash) => {
+            if (err) {
+                console.error('Error hashing password:', err);
+                return res.status(500).json({ error: 'Error hashing password' });
+            }
+            const updateUserSql = `UPDATE user SET password = ?, Password_view = ?, name = ? WHERE id = ?`;
+
+            db.query(updateUserSql, [hash, password_view, name, userId], (err, result) => {
+                if (err) {
+                    console.log('Error updating phone number:', err);
+                    return res.status(500).json({ error: 'Error Updating Phone Number' });
+                }
+                console.log(hash);
+                res.status(200).json({ message: 'User and order address updated successfully' });
+            });
+        });
+    });
 });
 
 module.exports = router;
