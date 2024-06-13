@@ -4,6 +4,7 @@ import PhoneInput from "react-phone-number-input";
 import 'react-phone-number-input/style.css';
 import { ToastContainer, toast } from 'react-toastify';
 import './Orderdetails.css';
+import Validation from "./OrderinputValidation";
 import { IoCheckmark } from 'react-icons/io5';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -29,7 +30,7 @@ function AuthUserOrder({ userId, setUserId }) {
     const [addtocart, setAddtocart] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [newuserOtp, setNewuserOtp] = useState(false);
-
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const calculateTotalPrice = () => {
@@ -49,7 +50,7 @@ function AuthUserOrder({ userId, setUserId }) {
                 if (response.data.userId) {
                     const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${response.data.userId}`);
                     setCheckUserId(userResponse.data);
-                    console.log(userResponse.data);
+                
                     if (userResponse.data.length > 0) {
                         setValues({
                             phone: userResponse.data[0].phone,
@@ -60,7 +61,6 @@ function AuthUserOrder({ userId, setUserId }) {
                             name: userResponse.data[0].name,
                             password_view: userResponse.data.password_view
                         });
-
                     }
                 }
             } catch (err) {
@@ -77,7 +77,7 @@ function AuthUserOrder({ userId, setUserId }) {
                 try {
                     const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${userId}`);
                     setCheckUserId(userResponse.data);
-                    console.log(userResponse.data);
+                    
                     if (userResponse.data.length > 0) {
                         setValues({
                             phone: userResponse.data[0].phone,
@@ -115,17 +115,17 @@ function AuthUserOrder({ userId, setUserId }) {
                 if (userId) {
                     const response = await axios.get(`http://localhost:8081/routeaddtocart/Getaddtocart/${userId}`);
                     setAddtocart(response.data);
-                    console.log(response.data);
+                    
                 } else {
                     const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                     setAddtocart(cartItems);
-                    console.log(cartItems);
+                    
                 }
             } catch (error) {
                 console.error('Error fetching cart items:', error);
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                 setAddtocart(cartItems);
-                console.log(cartItems);
+                
             }
         };
         fetchAddtocartproduct();
@@ -133,12 +133,17 @@ function AuthUserOrder({ userId, setUserId }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        const err = Validation(values);
+        setErrors(err);
+        console.log(err);
+        if (err.phone === "" && err.Address === "" && err.City === "" && err.zip_Code === "") {
         try {
             await axios.put(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
             setCheckUserId(prevState => prevState.map(item => item.id === userId ? { ...item, ...values } : item));
         } catch (err) {
             console.error('Error updating phone number:', err);
         }
+    }
     };
 
     const handleInputChange = (name, value) => {
@@ -222,19 +227,23 @@ function AuthUserOrder({ userId, setUserId }) {
     const handleInputupdateChange = (name, value) => {
         setValues(prev => ({ ...prev, [name]: value }));
     }
+
     const handleUpdateDetails = async (event) => {
         event.preventDefault();
-        try {
-            await axios.put(`http://localhost:8081/orderdetails/updateDetails/${userId}`, values);
-            toast.success('update Details Successfully!');
-        } catch (err) {
-            console.error('Error updating phone number:', err);
+        const err = Validation(values);
+        setErrors(err);
+        if (err.name === "" && err.password_view === "") {
+            try {
+                await axios.put(`http://localhost:8081/orderdetails/updateDetails/${userId}`, values);
+                toast.success('Update Details Successfully!');
+                setRegisterMessage('');
+            }
+            catch (err) {
+                console.error('Error updating details:', err);
+            }
         }
     }
 
-    const handleNextStep = () => {
-        setRegisterMessage('');
-    }
     return (
         <div className="container mt-5">
             <div className="row justify-content-center">
@@ -269,6 +278,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                         value={values.name}
                                         onChange={(e) => handleInputupdateChange('name', e.target.value)}
                                     />
+                                    {errors.name && <span className='text-danger'>{errors.name}</span>}
                                 </div>
                             </div>
                             <div className="mb-3 mt-3">
@@ -279,9 +289,10 @@ function AuthUserOrder({ userId, setUserId }) {
                                     value={values.password_view}
                                     onChange={(e) => handleInputupdateChange('password_view', e.target.value)}
                                 />
+                                {errors.password_view && <span className='text-danger'>{errors.password_view}</span>}
                             </div>
                             <button type="submit" className="btn btn-warning" onClick={handleUpdateDetails}>Update Details</button>
-                            <button className="btn btn-success" onClick={handleNextStep}>Next</button>
+                            
                         </div>
                         <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
                             Address Details
@@ -367,6 +378,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     ref={ref}
                                                     placeholder="Enter Your Mobile number"
                                                 />
+                                                {errors.phone && <span className='text-danger'>{errors.phone}</span>}
                                             </div>
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputAddress" className="form-label text-muted">Address*</label>
@@ -376,6 +388,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     value={values.Address}
                                                     onChange={(e) => handleInputChange('Address', e.target.value)}
                                                 />
+                                                {errors.Address && <span className='text-danger'>{errors.Address}</span>}
                                             </div>
                                         </div>
                                         <div className="row">
@@ -387,6 +400,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     value={values.City}
                                                     onChange={(e) => handleInputChange('City', e.target.value)}
                                                 />
+                                                {errors.City && <span className='text-danger'>{errors.City}</span>}
                                             </div>
                                             <div className="mb-3 mt-3 col-6">
                                                 <label htmlFor="exampleInputPostcode" className="form-label text-muted">Postcode / ZIP*</label>
@@ -396,6 +410,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     value={values.zip_Code}
                                                     onChange={(e) => handleInputChange('zip_Code', e.target.value)}
                                                 />
+                                                {errors.zip_Code && <span className='text-danger'>{errors.zip_Code}</span>}
                                             </div>
                                         </div>
                                         <div className="form-group mt-3">
@@ -425,10 +440,8 @@ function AuthUserOrder({ userId, setUserId }) {
                         ))}
                         <hr />
                         <div className="d-flex justify-content-between align-items-center">
-
-                            <h5>Total Price</h5>
-
-                            <h5>₹{totalPrice.toFixed(2)}</h5>
+                           <h5>Total Price</h5>
+                         <h5>₹{totalPrice.toFixed(2)}</h5>
                         </div>
                     </div>
 

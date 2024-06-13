@@ -57,6 +57,7 @@ function Addproduct() {
         event.preventDefault();
         const err = Validation(values);
         setErrors(err);
+        
         if (
             err.product_name === "" &&
             err.product_description === "" &&
