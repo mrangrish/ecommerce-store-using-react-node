@@ -14,7 +14,9 @@ function AuthUserOrder({ userId, setUserId }) {
         Address: '',
         City: '',
         zip_Code: '',
-        useremail: ''
+        useremail: '',
+        name: '',
+        password_view: '',
     });
 
     const [checkUserId, setCheckUserId] = useState([]);
@@ -27,7 +29,7 @@ function AuthUserOrder({ userId, setUserId }) {
     const [addtocart, setAddtocart] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [newuserOtp, setNewuserOtp] = useState(false);
-    const [newOtp, setNewOtp] = useState('');
+
 
     useEffect(() => {
         const calculateTotalPrice = () => {
@@ -47,13 +49,16 @@ function AuthUserOrder({ userId, setUserId }) {
                 if (response.data.userId) {
                     const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${response.data.userId}`);
                     setCheckUserId(userResponse.data);
+                    console.log(userResponse.data);
                     if (userResponse.data.length > 0) {
                         setValues({
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
                             City: userResponse.data[0].City,
                             zip_Code: userResponse.data[0].zip_Code,
-                            useremail: userResponse.data[0].email
+                            useremail: userResponse.data[0].email,
+                            name: userResponse.data[0].name,
+                            password_view: userResponse.data.password_view
                         });
 
                     }
@@ -72,13 +77,17 @@ function AuthUserOrder({ userId, setUserId }) {
                 try {
                     const userResponse = await axios.get(`http://localhost:8081/orderdetails/orderUserId/${userId}`);
                     setCheckUserId(userResponse.data);
+                    console.log(userResponse.data);
                     if (userResponse.data.length > 0) {
                         setValues({
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
                             City: userResponse.data[0].City,
                             zip_Code: userResponse.data[0].zip_Code,
-                            useremail: userResponse.data[0].email
+                            useremail: userResponse.data[0].email,
+                            name: userResponse.data[0].name,
+                            password_view: userResponse.data[0].Password_view
+
                         });
                     }
                 } catch (err) {
@@ -157,7 +166,6 @@ function AuthUserOrder({ userId, setUserId }) {
             });
     };
 
-
     const verifyOtp = async () => {
         try {
             const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
@@ -211,6 +219,22 @@ function AuthUserOrder({ userId, setUserId }) {
         }
     }
 
+    const handleInputupdateChange = (name, value) => {
+        setValues(prev => ({ ...prev, [name]: value }));
+    }
+    const handleUpdateDetails = async (event) => {
+        event.preventDefault();
+        try {
+            await axios.put(`http://localhost:8081/orderdetails/updateDetails/${userId}`, values);
+            toast.success('update Details Successfully!');
+        } catch (err) {
+            console.error('Error updating phone number:', err);
+        }
+    }
+
+    const handleNextStep = () => {
+        setRegisterMessage('');
+    }
     return (
         <div className="container mt-5">
             <div className="row justify-content-center">
@@ -231,21 +255,37 @@ function AuthUserOrder({ userId, setUserId }) {
                             <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Update Your Name and password</p>
                         </div>
                         <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                        
-                            
-                                <div className="mt-3">
-                                    <label htmlFor="exampleInputemail" className="form-label text-muted">Name*</label>
-                                    <input type="text" className="form-control text-muted input" value={values.name}/>
-                                </div>
-                        
-                                <div className="mb-3 mt-3">
-                                    <label htmlFor="exampleInputpassword">Password*</label>
-                                    <input type="password" className="form-control text-muted input" value={values.password_view}/>
-                                </div>
-                            
-                            <button type="submit" className="btn btn-warning">Submit</button>
-                        </div>
 
+                            <div className="row">
+                                <div className="mt-3 col-6">
+                                    <label htmlFor="exampleInputemail" className="form-label text-muted">Email*</label>
+                                    <input type="text" className="form-control text-muted input" value={email} disabled />
+                                </div>
+                                <div className="mt-3 col-6">
+                                    <label htmlFor="exampleInputname" className="form-label text-muted">Name*</label>
+                                    <input
+                                        type="text"
+                                        className="form-control text-muted input"
+                                        value={values.name}
+                                        onChange={(e) => handleInputupdateChange('name', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="mb-3 mt-3">
+                                <label htmlFor="exampleInputpassword">Password*</label>
+                                <input
+                                    type="text"
+                                    className="form-control text-muted input"
+                                    value={values.password_view}
+                                    onChange={(e) => handleInputupdateChange('password_view', e.target.value)}
+                                />
+                            </div>
+                            <button type="submit" className="btn btn-warning" onClick={handleUpdateDetails}>Update Details</button>
+                            <button className="btn btn-success" onClick={handleNextStep}>Next</button>
+                        </div>
+                        <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
+                            Address Details
+                        </div>
                     </div>
                 ) : (
                     <div className="col-md-7">
