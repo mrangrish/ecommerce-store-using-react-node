@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, createRef } from "react";
 import axios from "axios";
 import PhoneInput from "react-phone-number-input";
@@ -47,10 +46,10 @@ function AuthUserOrder({ userId, setUserId }) {
                         Address: userResponse.data[0].Address,
                         City: userResponse.data[0].City,
                         zip_Code: userResponse.data[0].zip_Code,
-
-                    })
+                    });
                     setAddress('User order details not existed.');
                 } else if (userResponse.status === 200 && userResponse.data.length > 0) {
+                    setAddress('');
                     setValues({
                         phone: userResponse.data[0].phone,
                         Address: userResponse.data[0].Address,
@@ -82,10 +81,11 @@ function AuthUserOrder({ userId, setUserId }) {
                             password_view: userResponse.data[0].Password_view,
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
-                        City: userResponse.data[0].City,
-                        zip_Code: userResponse.data[0].zip_Code
-                        })
+                            City: userResponse.data[0].City,
+                            zip_Code: userResponse.data[0].zip_Code
+                        });
                     } else if (userResponse.status === 200 && userResponse.data.length > 0) {
+                        setAddress('');
                         setValues({
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
@@ -110,11 +110,14 @@ function AuthUserOrder({ userId, setUserId }) {
         const err = Validation(values);
         setErrors(err);
         console.log(err);
+
         if (err.phone === "" && err.Address === "" && err.City === "" && err.zip_Code === "") {
             try {
-                await axios.put(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
+                await axios.post(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
                 setCheckUserId(prevState => prevState.map(item => item.id === userId ? { ...item, ...values } : item));
-                toast.success('Phone number updated successfully!');
+                toast.success('Order Address Add successfully!');
+                setAddress('');
+
             } catch (err) {
                 console.error('Error updating phone number:', err);
             }
@@ -123,7 +126,8 @@ function AuthUserOrder({ userId, setUserId }) {
 
     const handleInputChange = (name, value) => {
         setValues(prev => ({ ...prev, [name]: value }));
-    };
+    }
+
 
     const sendOtp = async () => {
         if (email.trim() === '') {
@@ -217,6 +221,7 @@ function AuthUserOrder({ userId, setUserId }) {
         }
     };
 
+
     return (
         <div className="container mt-5">
             <div className="row justify-content-center">
@@ -239,45 +244,40 @@ function AuthUserOrder({ userId, setUserId }) {
                         <div style={{ background: "lightgrey", padding: "3% 4%" }}>
                             <div className="row">
                                 <div className="mt-3 col-6">
-                                    <label htmlFor="exampleInputEmail" className="form-label text-muted">Email*</label>
-                                    <input type="text" className="form-control text-muted input" value={email} disabled />
-                                </div>
-                                <div className="mt-3 col-6">
-                                    <label htmlFor="exampleInputName" className="form-label text-muted">Name*</label>
+                                    <label>Name</label>
                                     <input
                                         type="text"
-                                        className="form-control text-muted input"
+                                        name="name"
+                                        placeholder="Enter Your Name"
                                         value={values.name}
                                         onChange={(e) => handleInputChange('name', e.target.value)}
                                     />
-                                    {errors.name && <span className='text-danger'>{errors.name}</span>}
+                                    {errors.name && <span style={{ color: "red" }}>{errors.name}</span>}
+                                </div>
+                                <div className="mt-3 col-6">
+                                    <label>Password</label>
+                                    <input
+                                        type="text"
+                                        name="password_view"
+                                        placeholder="Enter Password"
+                                        value={values.password_view}
+                                        onChange={(e) => handleInputChange('password_view', e.target.value)}
+                                    />
+                                    {errors.password_view && <span style={{ color: "red" }}>{errors.password_view}</span>}
                                 </div>
                             </div>
-                            <div className="mb-3 mt-3">
-                                <label htmlFor="exampleInputPassword">Password*</label>
-                                <input
-                                    type="text"
-                                    className="form-control text-muted input"
-                                    value={values.password_view}
-                                    onChange={(e) => handleInputChange('password_view', e.target.value)}
-                                />
-                                {errors.password_view && <span className='text-danger'>{errors.password_view}</span>}
-                            </div>
-                            <button type="submit" className="btn btn-warning" onClick={handleUpdateDetails}>Update Details</button>
-                        </div>
-                        <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
-                            Address Details
+                            <button className="btn btn-primary mt-3" onClick={handleUpdateDetails}>
+                                Update Details
+                            </button>
                         </div>
                     </div>
                 ) : (
                     <div className="col-md-7">
                         {checkUserId.length === 0 ? (
                             <div>
-
                                 <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
                                     <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
                                 </div>
-
                                 {!otpVerified ? (
                                     <div style={{ background: "lightgrey", padding: "3% 4%" }}>
                                         <label htmlFor="exampleInputEmail" className="form-label text-muted">Email*</label>
@@ -331,71 +331,80 @@ function AuthUserOrder({ userId, setUserId }) {
                                 </div>
                                 {address ? (
                                     <>
-                                        <div>
-                                            <div style={{ margin: "0 0", background: 'lightseagreen', color: "white" }} className="shadow rounded p-3">
-                                                Address Details
+                                        <div className="col-md-7">
+                                            <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
+                                                <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Please Add Your Address Details</p>
                                             </div>
                                             <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                                <div className="row">
-                                                    <div className="mb-3 mt-3 col-6">
-                                                        <label htmlFor="exampleInputphone" className="form-label text-muted">Phone Number</label>
-                                                        <PhoneInput
-                                                            defaultCountry="IN"
-                                                            onChange={(value) => handleInputChange('phone', value)}
-                                                            ref={ref}
-                                                            placeholder="Enter Your Mobile number"
-                                                        />
-                                                        {errors.phone && <span className='text-danger'>{errors.phone}</span>}
+                                                <form onSubmit={handleSubmit}>
+                                                    <div className="row">
+                                                        <div className="mt-3 col-6">
+                                                            <label>Phone Number</label>
+                                                            <PhoneInput
+                                                                ref={ref}
+                                                                defaultCountry="IN"
+                                                                value={values.phone}
+                                                                onChange={(value) => handleInputChange('phone', value)}
+                                                            />
+                                                            {errors.phone && <span style={{ color: "red" }}>{errors.phone}</span>}
+                                                        </div>
+                                                        <div className="mt-3 col-6">
+                                                            <label>Address</label>
+                                                            <input
+                                                                type="text"
+                                                                name="Address"
+                                                                placeholder="Enter Your Address"
+                                                                value={values.Address}
+                                                                onChange={(e) => handleInputChange('Address', e.target.value)}
+                                                            />
+                                                            {errors.Address && <span style={{ color: "red" }}>{errors.Address}</span>}
+                                                        </div>
+                                                        <div className="mt-3 col-6">
+                                                            <label>City</label>
+                                                            <input
+                                                                type="text"
+                                                                name="City"
+                                                                placeholder="Enter City"
+                                                                value={values.City}
+                                                                onChange={(e) => handleInputChange('City', e.target.value)}
+                                                            />
+                                                            {errors.City && <span style={{ color: "red" }}>{errors.City}</span>}
+                                                        </div>
+                                                        <div className="mt-3 col-6">
+                                                            <label>Zip Code</label>
+                                                            <input
+                                                                type="text"
+                                                                name="zip_Code"
+                                                                placeholder="Enter Zipcode"
+                                                                value={values.zip_Code}
+                                                                onChange={(e) => handleInputChange('zip_Code', e.target.value)}
+                                                            />
+                                                            {errors.zip_Code && <span style={{ color: "red" }}>{errors.zip_Code}</span>}
+                                                        </div>
                                                     </div>
-                                                    <div className="mb-3 mt-3 col-6">
-                                                        <label htmlFor="exampleInputAddress" className="form-label text-muted">Address*</label>
-                                                        <input
-                                                            type="text"
-                                                            className="form-control input text-muted"
-                                                            placeholder="Enter Your Address"
-                                                            onChange={(e) => handleInputChange('Address', e.target.value)}
-                                                        />
-                                                        {errors.Address && <span className='text-danger'>{errors.Address}</span>}
-                                                    </div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="mb-3 mt-3 col-6">
-                                                        <label htmlFor="exampleInputCity" className="form-label text-muted">Town/City</label>
-                                                        <input
-                                                            type="text"
-                                                            className="form-control input text-muted"
-                                                            placeholder="Enter Your City"
-                                                            onChange={(e) => handleInputChange('City', e.target.value)}
-                                                        />
-                                                        {errors.City && <span className='text-danger'>{errors.City}</span>}
-                                                    </div>
-                                                    <div className="mb-3 mt-3 col-6">
-                                                        <label htmlFor="exampleInputPostcode" className="form-label text-muted">Postcode / ZIP*</label>
-                                                        <input
-                                                            type="text"
-                                                            className="form-control input text-muted"
-                                                            placeholder="Enter Your Zip_code"
-                                                            onChange={(e) => handleInputChange('zip_Code', e.target.value)}
-                                                        />
-                                                        {errors.zip_Code && <span className='text-danger'>{errors.zip_Code}</span>}
-                                                    </div>
-                                                </div>
-                                                <div className="form-group mt-3">
-                                                    <button className="btn btn-primary" onClick={handleSubmit}>Next</button>
-                                                </div>
+                                                    <button className="btn btn-primary mt-3" type="submit">
+                                                        Add Address
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </>
                                 ) : (
                                     <>
-                                   <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
-                                     <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
-                                        <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.Address}
-                                    </p>
-                                </div>
+                                        <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
+                                            <div className="row">
+                                                <div className="col-8">
+                                                    <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                                        <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.Address}
+                                                    </p>
+                                                </div>
+                                                <div className="col-4">
+                                                    <button className="btn btn-primary">Add new Address</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </>
                                 )}
-
                             </>
                         )}
                     </div>
