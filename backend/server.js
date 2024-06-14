@@ -4,6 +4,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const router = require('./route/router.js');  
+
 const productRouter = require('./route/product/product.js');  
 const addtocartRouter = require('./route/addtocart/addtocart.js');
 const userAuthRouter = require('./route/userAuth/Auth.js');
