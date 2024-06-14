@@ -46,72 +46,56 @@ router.get('/orderUserId/:userId', (req, res) => {
     }
 });
 
-router.put('/updatePhoneNumber/:userId', (req, res) => {
+router.post('/updatePhoneNumber/:userId', (req, res) => {
     const userId = req.params.userId;
     const { phone, Address, City, zip_Code } = req.body;
 
-    const updateUserSql = `UPDATE user SET phone = ? WHERE id = ?`;
-
-    db.query(updateUserSql, [phone, userId], (err, result) => {
+    const insertOrderAddressSql = `INSERT INTO order_address (user_id, Address, phone, City, zip_Code) VALUES (?, ?, ?, ?, ?)`;
+    db.query(insertOrderAddressSql, [userId, Address, phone, City, zip_Code], (err, result) => {
         if (err) {
-            console.log('Error updating phone number:', err);
-            return res.status(500).json({ error: 'Error Updating Phone Number' });
+            console.log('Error inserting order address:', err);
+            return res.status(500).json({ error: 'Error Inserting Order Address' });
         }
-
-        const checkOrderAddressSql = `SELECT COUNT(*) AS count FROM order_address WHERE user_id = ?`;
-        db.query(checkOrderAddressSql, [userId], (err, result) => {
-            if (err) {
-                console.log('Error checking order address:', err);
-                return res.status(500).json({ error: 'Error Checking Order Address' });
-            }
-
-            const hasOrderAddress = result[0].count > 0;
-
-            if (hasOrderAddress) {
-                const updateOrderAddressSql = `UPDATE order_address SET Address = ?, City = ?, zip_Code = ? WHERE user_id = ?`;
-                db.query(updateOrderAddressSql, [Address, City, zip_Code, userId], (err, result) => {
-                    if (err) {
-                        console.log('Error updating order address:', err);
-                        return res.status(500).json({ error: 'Error Updating Order Address' });
-                    }
-                    res.status(200).json({ message: 'User and order address updated successfully' });
-                });
-            } else {
-                const insertOrderAddressSql = `INSERT INTO order_address (user_id, Address, City, zip_Code) VALUES (?, ?, ?, ?)`;
-                db.query(insertOrderAddressSql, [userId, Address, City, zip_Code], (err, result) => {
-                    if (err) {
-                        console.log('Error inserting order address:', err);
-                        return res.status(500).json({ error: 'Error Inserting Order Address' });
-                    }
-                    res.status(200).json({ message: 'User and order address updated successfully' });
-                });
-            }
-        });
+        return res.status(200).json({ message: 'User and order address updated successfully' });
     });
 });
+
 
 router.post('/movecartItems', (req, res) => {
     console.log(req.body);
     try {
-        const userId = req.body.userId;
-        const productId = req.body.productId;
-        // Assuming quantity is also sent in the request body
-        const quantity = req.body.quantity;
+        const users_id = req.body.userId;
+        const products_id = req.body.productId;
         const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        // Adjust the SQL query to include the quantity value
-        const sql = "INSERT INTO addtocart (user_id, product_id, quantity, created_at) VALUES (?, ?, ?, ?)";
-        // Pass all values in the array for parameterized query
-        db.query(sql, [userId, productId, quantity, currentDateTime], (err, result) => {
-            if (err) {
-                console.error('Error inserting into addtocart:', err);
-                return res.status(500).json({ error: 'Error inserting into addtocart' });
+        const checkSql = "SELECT * FROM addtocart WHERE user_id = ? AND product_id = ?";
+        db.query(checkSql, [users_id, products_id], (checkErr, checkResult) => {
+            if (checkErr) {
+                console.error('error checking cart', checkErr);
+                return res.status(500).json({ err: 'Error checking cart' });
             }
-            res.status(201).json({ message: 'Added to cart successfully' });
-        });
 
+            if (checkResult.length > 0) {
+                const updateSql = "UPDATE addtocart SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ?";
+                db.query(updateSql, [users_id, products_id], (updateErr, updateResult) => {
+                    if (updateErr) {
+                        console.error('error updating cart', updateErr);
+                        return res.status(500).json({ err: 'Error updating cart' });
+                    }
+                    res.status(200).json({ message: 'Cart updated successfully' });
+                });
+            } else {
+                const insertSql = "INSERT INTO addtocart (user_id, product_id, quantity, created_at) VALUES (?, ?, 1, ?)";
+                db.query(insertSql, [users_id, products_id, currentDateTime], (insertErr, insertResult) => {
+                    if (insertErr) {
+                        console.error('error adding to cart', insertErr);
+                        return res.status(500).json({ err: 'Error adding to cart' });
+                    }
+                    res.status(201).json({ message: 'Added to cart successfully' });
+                });
+            }
+        });
     } catch (error) {
-        console.error('Error in movecartItems endpoint:', error);
         res.status(500).send(error);
     }
 });
