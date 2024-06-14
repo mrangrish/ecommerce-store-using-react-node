@@ -6,26 +6,37 @@ const bcrypt = require('bcryptjs');
 router.get('/orderUserId/:userId', (req, res) => {
     try {
         const userId = req.params.userId;
+
         const checkSql = `SELECT COUNT(*) AS count FROM order_address WHERE user_id = ?`;
         db.query(checkSql, [userId], (err, result) => {
             if (err) {
                 console.log('Error checking order address:', err);
                 return res.status(500).json({ error: 'Error Checking Order Address' });
             }
+
             const hasOrderAddress = result[0].count > 0;
+
             if (hasOrderAddress) {
-                const sql = `SELECT user.id, user.name, user.email, user.phone, user.role_as, order_address.Address, order_address.user_id, order_address.City, order_address.zip_Code, order_address.id as orderAddress_id FROM user INNER JOIN order_address ON order_address.user_id = user.id WHERE user.id = ?`;
+                sql = `SELECT user.id, user.name, user.email, user.phone, user.role_as, order_address.Address, order_address.user_id, order_address.City, order_address.zip_Code, order_address.id as orderAddress_id FROM user INNER JOIN order_address ON order_address.user_id = user.id WHERE user.id = ?`;
                 db.query(sql, [userId], (err, product) => {
                     if (err) {
                         console.log('Error fetching user:', err);
                         return res.status(500).json({ error: 'Error Fetching User' });
                     }
-
                     res.status(200).json(product);
                 });
             } else {
-                console.log("Order details do not exist for the user");
-                res.status(201).json({ error: 'Order details not found for the user' });
+                sql = `SELECT id, name, email, phone, role_as, 
+                              '' AS Address, '' AS City, '' AS zip_Code 
+                       FROM user 
+                       WHERE user.id = ?`;
+                db.query(sql, [userId], (err, product) => {
+                    if (err) {
+                        console.log('Error fetching user:', err);
+                        return res.status(500).json({ error: 'Error Fetching User' });
+                    }
+                    res.status(201).json(product);
+                });
             }
         });
 
@@ -33,24 +44,6 @@ router.get('/orderUserId/:userId', (req, res) => {
         console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
-
-router.get('/checkuser/:userId', (req, res) => {
-    const userId = req.params.userId;
-    const sql = "SELECT * FROM user WHERE id = ?";
-    
-    db.query(sql, [userId], (err, result) => {
-        if (err) {
-            console.error('Error checking user:', err);
-            return res.status(500).json({ error: 'Error checking user' });
-        }
-
-        if (result.length === 0) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        res.status(200).json(result[0]);
-    });
 });
 
 router.put('/updatePhoneNumber/:userId', (req, res) => {
