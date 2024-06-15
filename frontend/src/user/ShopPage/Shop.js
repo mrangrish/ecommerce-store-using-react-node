@@ -73,12 +73,8 @@ function Shop({ userId, setUserId }) {
         );
         toast.success("Product added to cart successfully!");
       } else {
-        const cartItems =
-          JSON.parse(localStorage.getItem("cartItems")) || [];
-        const created_at = new Date()
-          .toISOString()
-          .slice(0, 19)
-          .replace("T", " ");
+        const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+        const created_at = new Date().toISOString().slice(0, 19).replace("T", " ");
         cartItems.push({
           productId,
           quantity: 1,

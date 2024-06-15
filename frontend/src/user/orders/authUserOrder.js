@@ -41,7 +41,7 @@ function AuthUserOrder({ userId, setUserId }) {
                     setValues({
                         useremail: userResponse.data[0].email,
                         name: userResponse.data[0].name,
-                        password_view: userResponse.data[0].Password_view,
+                        password_view: userResponse.data[0].password_view,
                         phone: userResponse.data[0].phone,
                         Address: userResponse.data[0].Address,
                         City: userResponse.data[0].City,
@@ -57,7 +57,7 @@ function AuthUserOrder({ userId, setUserId }) {
                         zip_Code: userResponse.data[0].zip_Code,
                         useremail: userResponse.data[0].email,
                         name: userResponse.data[0].name,
-                        password_view: userResponse.data[0].Password_view
+                        password_view: userResponse.data[0].password_view
                     });
                 }
             } catch (err) {
@@ -78,7 +78,7 @@ function AuthUserOrder({ userId, setUserId }) {
                         setValues({
                             useremail: userResponse.data[0].email,
                             name: userResponse.data[0].name,
-                            password_view: userResponse.data[0].Password_view,
+                            password_view: userResponse.data[0].password_view,
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
                             City: userResponse.data[0].City,
@@ -93,7 +93,7 @@ function AuthUserOrder({ userId, setUserId }) {
                             zip_Code: userResponse.data[0].zip_Code,
                             useremail: userResponse.data[0].email,
                             name: userResponse.data[0].name,
-                            password_view: userResponse.data[0].Password_view
+                            password_view: userResponse.data[0].password_view
                         });
                     }
                 } catch (err) {
@@ -127,7 +127,6 @@ function AuthUserOrder({ userId, setUserId }) {
     const handleInputChange = (name, value) => {
         setValues(prev => ({ ...prev, [name]: value }));
     }
-
 
     const sendOtp = async () => {
         if (email.trim() === '') {
@@ -250,6 +249,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                         name="name"
                                         placeholder="Enter Your Name"
                                         value={values.name}
+                                        className="form-control input"
                                         onChange={(e) => handleInputChange('name', e.target.value)}
                                     />
                                     {errors.name && <span style={{ color: "red" }}>{errors.name}</span>}
@@ -261,6 +261,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                         name="password_view"
                                         placeholder="Enter Password"
                                         value={values.password_view}
+                                        className="form-control input"
                                         onChange={(e) => handleInputChange('password_view', e.target.value)}
                                     />
                                     {errors.password_view && <span style={{ color: "red" }}>{errors.password_view}</span>}
@@ -272,9 +273,9 @@ function AuthUserOrder({ userId, setUserId }) {
                         </div>
                     </div>
                 ) : (
-                    <div className="col-md-7">
+                    <div className="col-md-6">
                         {checkUserId.length === 0 ? (
-                            <div>
+                            <>
                                 <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
                                     <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
                                 </div>
@@ -321,17 +322,19 @@ function AuthUserOrder({ userId, setUserId }) {
                                         )}
                                     </div>
                                 ) : null}
-                            </div>
+                            </>
                         ) : (
                             <>
-                                <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
-                                    <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
-                                        <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.useremail}
-                                    </p>
+                                
+                                    <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
+                                        <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                            <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.useremail}
+                                        </p>
+                                
                                 </div>
                                 {address ? (
                                     <>
-                                        <div className="col-md-7">
+                                        
                                             <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
                                                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Please Add Your Address Details</p>
                                             </div>
@@ -353,6 +356,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                             <input
                                                                 type="text"
                                                                 name="Address"
+                                                                className="form-control input"
                                                                 placeholder="Enter Your Address"
                                                                 value={values.Address}
                                                                 onChange={(e) => handleInputChange('Address', e.target.value)}
@@ -365,6 +369,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                                 type="text"
                                                                 name="City"
                                                                 placeholder="Enter City"
+                                                                className="form-control input"
                                                                 value={values.City}
                                                                 onChange={(e) => handleInputChange('City', e.target.value)}
                                                             />
@@ -377,6 +382,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                                 name="zip_Code"
                                                                 placeholder="Enter Zipcode"
                                                                 value={values.zip_Code}
+                                                                className="form-control input"
                                                                 onChange={(e) => handleInputChange('zip_Code', e.target.value)}
                                                             />
                                                             {errors.zip_Code && <span style={{ color: "red" }}>{errors.zip_Code}</span>}
@@ -387,7 +393,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     </button>
                                                 </form>
                                             </div>
-                                        </div>
+                                        
                                     </>
                                 ) : (
                                     <>

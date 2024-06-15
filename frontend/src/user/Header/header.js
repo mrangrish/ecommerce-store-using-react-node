@@ -9,8 +9,6 @@ function Header({ userId, setUserId }) {
   const [localStoragecount, setlocalStoragecount] = useState(0);
 
   const navigate = useNavigate();
-  // console.log(userId);
-
   const handleLogout = () => {
     axios.get('http://localhost:8081/userAuth/Userlogout', { withCredentials: true })
       .then(response => {
