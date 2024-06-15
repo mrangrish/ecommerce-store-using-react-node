@@ -17,7 +17,7 @@ import AllCustomer from './admin/Customer/AllCustomer';
 import Shop from './user/ShopPage/Shop';
 import Login from './user/Login/Login';
 import OrderDetails from './user/orders/orderdetails';
-import Example from './example';
+
 function App() {
     const [userId, setUserId] = useState(null);
 
@@ -27,6 +27,7 @@ function App() {
                 const response = await axios.get('http://localhost:8081/session', {
                     withCredentials: true
                 });
+                sessionStorage.setItem('userId', response.data.userId);
                 setUserId(response.data.userId);
 
             } catch (error) {
@@ -49,8 +50,7 @@ function App() {
                 <Route path='/addtocart' element={<Addtocart userId={userId} setUserId={setUserId} />} />
                 <Route path='/shop' element={<Shop userId={userId} setUserId={setUserId} />} />
                 <Route path='/orders' element={<OrderDetails userId={userId} setUserId={setUserId} />} />
-                <Route path='/example' element={<Example />} />
-
+        
                 {/* All Admin area routes */}
                 <Route path='/AdminProductView/:id' element={<ProductView />} />
                 <Route path='/AdminProductEdit/:id' element={<AdminProductEdit />} />

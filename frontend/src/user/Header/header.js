@@ -72,7 +72,6 @@ function Header({ userId, setUserId }) {
               <Nav.Link href="/Login"><IoLogIn size={32} /></Nav.Link>
             ) : (
 
-
               <NavDropdown title={<IoPersonCircle size={32} />} id="basic-nav-dropdown">
                 <NavDropdown.Item onClick={handleLogout}><IoLogOut /> Logout</NavDropdown.Item>
               </NavDropdown>
