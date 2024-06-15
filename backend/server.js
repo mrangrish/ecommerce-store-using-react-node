@@ -27,7 +27,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(session({
-    secret: 'secret',
+    secret: 'Session',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
