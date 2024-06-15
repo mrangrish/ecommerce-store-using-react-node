@@ -26,7 +26,7 @@ router.get('/orderUserId/:userId', (req, res) => {
                     res.status(200).json(product);
                 });
             } else {
-                sql = `SELECT id, name, email, phone, role_as, 
+                sql = `SELECT id, name, email, password_view ,phone, role_as, 
                               '' AS Address, '' AS City, '' AS zip_Code 
                        FROM user 
                        WHERE user.id = ?`;
