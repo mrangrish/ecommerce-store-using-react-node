@@ -17,7 +17,7 @@ router.get('/orderUserId/:userId', (req, res) => {
             const hasOrderAddress = result[0].count > 0;
 
             if (hasOrderAddress) {
-                sql = `SELECT user.id, user.name, user.email, order_address.phone, user.role_as, order_address.Address, order_address.user_id, order_address.City, order_address.zip_Code, order_address.id as orderAddress_id FROM user INNER JOIN order_address ON order_address.user_id = user.id WHERE user.id = ?`;
+                sql = `SELECT user.id, user.name, user.email, order_address.id as order_addressId,order_address.phone, user.role_as, order_address.Address, order_address.user_id, order_address.City, order_address.zip_Code, order_address.id as orderAddress_id FROM user INNER JOIN order_address ON order_address.user_id = user.id WHERE user.id = ?`;
                 db.query(sql, [userId], (err, product) => {
                     if (err) {
                         console.log('Error fetching user:', err);
