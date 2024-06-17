@@ -17,17 +17,17 @@ router.get('/orderUserId/:userId', (req, res) => {
             const hasOrderAddress = result[0].count > 0;
 
             if (hasOrderAddress) {
-                sql = `SELECT user.id, user.name, user.email, user.phone, user.role_as, order_address.Address, order_address.user_id, order_address.City, order_address.zip_Code, order_address.id as orderAddress_id FROM user INNER JOIN order_address ON order_address.user_id = user.id WHERE user.id = ?`;
+                sql = `SELECT user.id, user.name, user.email, order_address.phone, user.role_as, order_address.Address, order_address.user_id, order_address.City, order_address.zip_Code, order_address.id as orderAddress_id FROM user INNER JOIN order_address ON order_address.user_id = user.id WHERE user.id = ?`;
                 db.query(sql, [userId], (err, product) => {
                     if (err) {
                         console.log('Error fetching user:', err);
                         return res.status(500).json({ error: 'Error Fetching User' });
                     }
-                    res.status(200).json(product);
+                     return res.status(200).json(product);
                 });
             } else {
-                sql = `SELECT id, name, email, password_view ,phone, role_as, 
-                              '' AS Address, '' AS City, '' AS zip_Code 
+                sql = `SELECT id, name, email, password_view , role_as, 
+                              '' AS Address, '' AS City, '' AS zip_Code, '' AS phone
                        FROM user 
                        WHERE user.id = ?`;
                 db.query(sql, [userId], (err, product) => {
@@ -35,7 +35,7 @@ router.get('/orderUserId/:userId', (req, res) => {
                         console.log('Error fetching user:', err);
                         return res.status(500).json({ error: 'Error Fetching User' });
                     }
-                    res.status(201).json(product);
+                return res.status(201).json(product);
                 });
             }
         });
