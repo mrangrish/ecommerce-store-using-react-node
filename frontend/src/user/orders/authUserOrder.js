@@ -361,7 +361,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     {userOrderAddressDetails.length > 0 && userOrderAddressDetails.map((detail) => (
                                                         <div className="row">
                                                             <div className="col-2" style={{ width: "3.333333%" }}>
-                                                                <input type="radio" />
+                                                                <input type="radio" value={detail.order_addressId}/>
                                                             </div>
                                                             <div className="col-5">
                                                                 <p><b>{detail.name}</b> {detail.phone}
