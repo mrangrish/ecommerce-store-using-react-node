@@ -131,7 +131,7 @@ function AuthUserOrder({ userId, setUserId }) {
         const err = Validation(values);
         setErrors(err);
         console.log(err);
-    
+
         if (err.phone === "" && err.Address === "" && err.City === "" && err.zip_Code === "") {
             try {
                 await axios.post(`http://localhost:8081/orderdetails/updatePhoneNumber/${userId}`, values);
@@ -145,7 +145,7 @@ function AuthUserOrder({ userId, setUserId }) {
             }
         }
     };
-    
+
     const handleInputChange = (name, value) => {
         setValues(prev => ({ ...prev, [name]: value }));
     }
@@ -195,7 +195,7 @@ function AuthUserOrder({ userId, setUserId }) {
             }
         } catch (error) {
             toast.error('Error verifying OTP: ' + error.message);
-        }   
+        }
     };
 
     const verifyNewUserOtp = async () => {
@@ -259,7 +259,7 @@ function AuthUserOrder({ userId, setUserId }) {
         setaddNewAddress(!addNewAddress)
     }
 
-    
+
 
     return (
         <div className="container-fluid mt-5">
@@ -357,56 +357,56 @@ function AuthUserOrder({ userId, setUserId }) {
                                                 </div>
 
                                                 <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                                
-                                                {userOrderAddressDetails.length > 0 && userOrderAddressDetails.map((detail) => (
+
+                                                    {userOrderAddressDetails.length > 0 && userOrderAddressDetails.map((detail) => (
                                                         <div className="row">
-                                                        <div className="col-2" style={{ width: "3.333333%" }}>
-                                                            <input type="radio" />
+                                                            <div className="col-2" style={{ width: "3.333333%" }}>
+                                                                <input type="radio" />
+                                                            </div>
+                                                            <div className="col-5">
+                                                                <p><b>{detail.name}</b> {detail.phone}
+                                                                    {detail.Address}{detail.City}{detail.zip_Code}</p>
+                                                            </div>
                                                         </div>
-                                                        <div className="col-5">
-                                                            <p><b>{detail.name}</b> {detail.phone}
-                                                            {detail.Address}{detail.City}{detail.zip_Code}</p>
-                                                        </div>
-                                                        </div>
-                                                        ))}
-                                                    </div>
-                                            
+                                                    ))}
+                                                </div>
+
                                                 <div className="shadow p-3 bg-body rounded"><button className="btn btn-primary" onClick={handleAddnewAddress}>Add New Address</button></div>
                                                 {addNewAddress ?
-                                                <>
-                                                <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
-                                                <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Please Add Your Address Details</p>
-                                            </div>
-                                            <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                                <form onSubmit={handleSubmit}>
-                                                    <div className="row">
-                                                        <div className="mt-3 col-6">
-                                                            <label>Phone Number</label>
-                                                            <PhoneInput ref={ref} defaultCountry="IN"  placeholder="Enter your phone" onChange={(value) => handleInputChange('phone', value)} />
-                                                            {errors.phone && <span style={{ color: "red" }}>{errors.phone}</span>}
+                                                    <>
+                                                        <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
+                                                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Please Add Your Address Details</p>
                                                         </div>
-                                                        <div className="mt-3 col-6">
-                                                            <label>Address</label>
-                                                            <input type="text" name="Address" className="form-control input" placeholder="Enter Your Address"  onChange={(e) => handleInputChange('Address', e.target.value)} />
-                                                            {errors.Address && <span style={{ color: "red" }}>{errors.Address}</span>}
+                                                        <div style={{ background: "lightgrey", padding: "3% 4%" }}>
+                                                            <form onSubmit={handleSubmit}>
+                                                                <div className="row">
+                                                                    <div className="mt-3 col-6">
+                                                                        <label>Phone Number</label>
+                                                                        <PhoneInput ref={ref} defaultCountry="IN" placeholder="Enter your phone" onChange={(value) => handleInputChange('phone', value)} />
+                                                                        {errors.phone && <span style={{ color: "red" }}>{errors.phone}</span>}
+                                                                    </div>
+                                                                    <div className="mt-3 col-6">
+                                                                        <label>Address</label>
+                                                                        <input type="text" name="Address" className="form-control input" placeholder="Enter Your Address" onChange={(e) => handleInputChange('Address', e.target.value)} />
+                                                                        {errors.Address && <span style={{ color: "red" }}>{errors.Address}</span>}
+                                                                    </div>
+                                                                    <div className="mt-3 col-6">
+                                                                        <label>City</label>
+                                                                        <input type="text" name="City" placeholder="Enter City" className="form-control input" onChange={(e) => handleInputChange('City', e.target.value)} />
+                                                                        {errors.City && <span style={{ color: "red" }}>{errors.City}</span>}
+                                                                    </div>
+                                                                    <div className="mt-3 col-6">
+                                                                        <label>Zip Code</label>
+                                                                        <input type="text" name="zip_Code" placeholder="Enter Zipcode" className="form-control input" onChange={(e) => handleInputChange('zip_Code', e.target.value)} />
+                                                                        {errors.zip_Code && <span style={{ color: "red" }}>{errors.zip_Code}</span>}
+                                                                    </div>
+                                                                </div>
+                                                                <button className="btn btn-primary mt-3" type="submit" >
+                                                                    Add Address
+                                                                </button>
+                                                            </form>
                                                         </div>
-                                                        <div className="mt-3 col-6">
-                                                            <label>City</label>
-                                                            <input type="text" name="City" placeholder="Enter City" className="form-control input"  onChange={(e) => handleInputChange('City', e.target.value)} />
-                                                            {errors.City && <span style={{ color: "red" }}>{errors.City}</span>}
-                                                        </div>
-                                                        <div className="mt-3 col-6">
-                                                            <label>Zip Code</label>
-                                                            <input type="text" name="zip_Code" placeholder="Enter Zipcode"  className="form-control input" onChange={(e) => handleInputChange('zip_Code', e.target.value)} />
-                                                            {errors.zip_Code && <span style={{ color: "red" }}>{errors.zip_Code}</span>}
-                                                        </div>
-                                                    </div>
-                                                    <button className="btn btn-primary mt-3" type="submit" >
-                                                        Add Address
-                                                    </button>
-                                                </form>
-                                            </div>
-                                            </>
+                                                    </>
                                                     : ""}
                                             </>
                                         }
@@ -416,12 +416,12 @@ function AuthUserOrder({ userId, setUserId }) {
                             </>
                         )}
                     </div>
-                )}  
+                )}
                 <div className="col-4">
                     <OrderSummary userId={userId} setUserId={setUserId} />
                 </div>
             </div>
-        </div>  
+        </div>
     );
 }
 
