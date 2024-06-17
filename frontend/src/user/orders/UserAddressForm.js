@@ -6,7 +6,8 @@ function UserAddressForm({ values, errors, handleInputChange, handleSubmit }) {
     const ref = createRef();
     return (
         <div>
-            <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
+
+<div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
                 <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Please Add Your Address Details</p>
             </div>
             <div style={{ background: "lightgrey", padding: "3% 4%" }}>
