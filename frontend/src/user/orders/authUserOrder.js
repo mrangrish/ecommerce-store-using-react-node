@@ -9,7 +9,7 @@ import './Orderdetails.css';
 import OrderSummary from "./OrderSummary";
 import Validation from "./OrderinputValidation";
 import { IoCheckmark } from 'react-icons/io5';
-import $ from "jquery";
+import $, { event } from "jquery";
 import RegisterUser from "./RegsiterUser";
 import UserAddressForm from "./UserAddressForm";
 
@@ -37,6 +37,9 @@ function AuthUserOrder({ userId, setUserId }) {
     const [errors, setErrors] = useState({});
     const [address, setAddress] = useState('');
     const [userOrderAddressDetails, setUserOrderAddressDetails] = useState([]);
+    const [selectedAddressId, setSelectedAddressId] = useState('');
+    const [getUpdateAddress, setgetUpdateAddress] = useState([]);
+
     useEffect(() => {
         const fetchUserId = async () => {
             try {
@@ -188,7 +191,6 @@ function AuthUserOrder({ userId, setUserId }) {
                         console.error('Error moving cart item:', error);
                     }
                 }
-
                 localStorage.removeItem('cartItems');
             } else {
                 toast.error('OTP verification failed.');
@@ -242,7 +244,6 @@ function AuthUserOrder({ userId, setUserId }) {
         }
     };
 
-
     const handleChangeAddress = async (e) => {
         e.preventDefault()
         if (e.target.value) {
@@ -258,6 +259,22 @@ function AuthUserOrder({ userId, setUserId }) {
         }
         setaddNewAddress(!addNewAddress)
     }
+    const handleRadioClick = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedAddressId(selectedValue);
+        setList(!list);
+    };
+
+
+    useEffect(() => {
+        const fetchSelectedAddressId = async () => {
+            if (selectedAddressId) {
+                const response = await axios.get(`http://localhost:8081/orderdetails/updateAddress/${selectedAddressId}`);
+                setgetUpdateAddress(response.data);
+            }
+        }
+        fetchSelectedAddressId();
+    })
 
     return (
         <div className="container-fluid mt-5">
@@ -314,15 +331,27 @@ function AuthUserOrder({ userId, setUserId }) {
                                             </div>
                                         )}
                                     </div>
+                                    
                                 ) : null}
+                                    <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
+                                    <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                       OrderDetails
+                                    </p>
+                                    </div>
+                                    <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
+                                    <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                      Payment Details
+                                    </p>
+                                    </div>
                             </>
                         ) : (
                             <>
+                            <>
                                 <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
+
                                     <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
                                         <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.useremail}
                                     </p>
-
                                 </div>
                                 {address ? (
                                     <>
@@ -339,9 +368,18 @@ function AuthUserOrder({ userId, setUserId }) {
                                             <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
                                                 <div className="row">
                                                     <div className="col-8">
-                                                        <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
-                                                            <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.Address}
-                                                        </p>
+                                                        {!selectedAddressId ? (
+                                                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                                                <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.Address}
+                                                            </p>
+                                                        ) : (
+                                                            getUpdateAddress.map((item) => (
+                                                            <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                                                <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {item.Address}
+                                                            </p>
+                                                            ))
+                                                        )}
+
                                                     </div>
                                                     <div className="col-4">
                                                         <button className="btn btn-primary" onClick={handleChangeAddress}>Change</button>
@@ -356,10 +394,15 @@ function AuthUserOrder({ userId, setUserId }) {
 
                                                 <div style={{ background: "lightgrey", padding: "3% 4%" }}>
 
-                                                    {userOrderAddressDetails.length > 0 && userOrderAddressDetails.map((detail) => (
-                                                        <div className="row">
+                                                    {userOrderAddressDetails.length > 0 && userOrderAddressDetails.map((detail, index) => (
+                                                        <div className="row" key={index}>
                                                             <div className="col-2" style={{ width: "3.333333%" }}>
-                                                                <input type="radio" value={detail.order_addressId}/>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="address_id"
+                                                                    onClick={handleRadioClick}
+                                                                    value={detail.order_addressId}
+                                                                />
                                                             </div>
                                                             <div className="col-5">
                                                                 <p><b>{detail.name}</b> {detail.phone}
@@ -412,6 +455,12 @@ function AuthUserOrder({ userId, setUserId }) {
                                     </>
                                 )}
                             </>
+                             <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
+                                  <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                    Payment Details
+                                  </p>
+                             </div>
+                                </>
                         )}
                     </div>
                 )}

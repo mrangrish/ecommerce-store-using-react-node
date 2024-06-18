@@ -23,7 +23,9 @@ function RegisterUser({values, handleInputChange, errors, handleUpdateDetails}) 
                     </div>
                     <button className="btn btn-primary mt-3" onClick={handleUpdateDetails}>Update Details</button>
                 </div>
+            
             </div>
+            
         </>
     )
 }
