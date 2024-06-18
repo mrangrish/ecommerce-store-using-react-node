@@ -23,7 +23,7 @@ router.get('/orderUserId/:userId', (req, res) => {
                         console.log('Error fetching user:', err);
                         return res.status(500).json({ error: 'Error Fetching User' });
                     }
-                     return res.status(200).json(product);
+                    return res.status(200).json(product);
                 });
             } else {
                 sql = `SELECT id, name, email, password_view , role_as, 
@@ -44,6 +44,20 @@ router.get('/orderUserId/:userId', (req, res) => {
         console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
+});
+router.get('/updateAddress/:selectedAddressId', (req,res) => {
+
+   const selectedAddressId = req.params.selectedAddressId;
+//    console.log(userId);
+   const sql = `SELECT * FROM order_address WHERE id = ?`;
+   db.query(sql, [selectedAddressId], (err, addressDetails) => {
+    if (err) {
+        console.log('Error fetching user:', err);
+        return res.status(500).json({ error: 'Error Fetching User' });
+    }
+    return res.status(200).json(addressDetails);
+   })
+  
 });
 
 router.post('/updatePhoneNumber/:userId', (req, res) => {
