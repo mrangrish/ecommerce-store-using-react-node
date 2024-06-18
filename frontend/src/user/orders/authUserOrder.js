@@ -476,7 +476,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     <div style={{ background: "lightgrey", padding: "3% 4%" }}>
                                                         <PaymentInputsContainer>
                                                             {({ meta, getCardNumberProps, getExpiryDateProps, getCVCProps }) => {
-                                                                console.log(meta); // Check what's inside meta for debugging
+                                                                console.log(meta); 
                                                                 return (
                                                                     <div>
                                                                         <input {...getCardNumberProps({ onChange: handleChangeCardNumber })} value={cardNumber} />
