@@ -39,8 +39,6 @@ function AuthUserOrder({ userId, setUserId }) {
     const [getUpdateAddress, setgetUpdateAddress] = useState([]);
     const [openPayment, setopenPayment] = useState([]);
 
-
-
     useEffect(() => {
         const fetchUserId = async () => {
             try {
@@ -271,13 +269,13 @@ function AuthUserOrder({ userId, setUserId }) {
         }
         setaddNewAddress(!addNewAddress)
     }
+
     const handleRadioClick = (event) => {
         const selectedValue = event.target.value;
         setSelectedAddressId(selectedValue);
         setList(!list);
         setopenPayment(!openPayment);
     };
-
 
     useEffect(() => {
         const fetchSelectedAddressId = async () => {

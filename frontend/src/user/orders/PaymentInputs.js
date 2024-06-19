@@ -34,7 +34,6 @@ function PaymentInput({ userId }) {
       setError('An error occurred while submitting payment information.');
     }
   }
-
   return (
     <>
       <PaymentInputsContainer>
