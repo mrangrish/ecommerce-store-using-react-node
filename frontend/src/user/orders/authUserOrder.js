@@ -50,7 +50,7 @@ function AuthUserOrder({ userId, setUserId }) {
     const handleChangeExpiryDate = (e) => setExpiryDate(e.target.value);
     const handleChangeCVC = (e) => setCvc(e.target.value);
 
-   const handlePaymentcart = async (event) => {
+   const handlePaymentcart = (event) => {
     event.preventDefault();
     console.log(cardNumber, expiryDate, cvc);
    }
