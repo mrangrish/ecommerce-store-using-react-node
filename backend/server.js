@@ -15,8 +15,8 @@ const AdminDashboard = require('./route/admindashboard/dashboard.js');
 const AdminCustomer = require('./route/admincustomer/adminCustomer.js');
 const userShop = require('./route/userShop/userShop.js');
 const OrderDetails = require('./route/OrderDetails/orderdetails.js');
-const mailVerified = require('./route/OrderDetails/OrderMailverification/mailVerified.js')
-
+const mailVerified = require('./route/OrderDetails/OrderMailverification/mailVerified.js');
+const PaymentCart = require('./route/OrderDetails/PaymentCart.js');
 const app = express();
 
 const corsOptions = {
@@ -50,6 +50,7 @@ app.use('/adminCustomer', AdminCustomer);
 app.use('/userShop', userShop);
 app.use('/orderdetails', OrderDetails);
 app.use('/mailverified', mailVerified);
+app.use('/AddPaymentCart', PaymentCart);
 
 app.get('/session', (req, res) => {
     if (req.session.userId) {
