@@ -1,19 +1,16 @@
 import React, { useEffect, useState, createRef } from "react";
 import axios from "axios";
-import PhoneInput from "react-phone-number-input";
-import 'react-phone-number-input/style.css';
-import { PaymentInputsContainer } from 'react-payment-inputs';
-import images from 'react-payment-inputs/images';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Orderdetails.css';
 import OrderSummary from "./OrderSummary";
 import Validation from "./OrderinputValidation";
 import { IoCheckmark } from 'react-icons/io5';
-import $, { event } from "jquery";
+import $, { error, event } from "jquery";
 import RegisterUser from "./RegsiterUser";
 import UserAddressForm from "./UserAddressForm";
-
+import AddNewAddress from './AddNewAddress';
+import PaymentInput from "./PaymentInputs";
 function AuthUserOrder({ userId, setUserId }) {
     const ref = createRef();
     const [values, setValues] = useState({
@@ -41,20 +38,8 @@ function AuthUserOrder({ userId, setUserId }) {
     const [selectedAddressId, setSelectedAddressId] = useState('');
     const [getUpdateAddress, setgetUpdateAddress] = useState([]);
     const [openPayment, setopenPayment] = useState([]);
-    const [cardNumber, setCardNumber] = useState('');
-    const [expiryDate, setExpiryDate] = useState('');
-    const [cvc, setCvc] = useState('');
-    
 
-    const handleChangeCardNumber = (e) => setCardNumber(e.target.value);
-    const handleChangeExpiryDate = (e) => setExpiryDate(e.target.value);
-    const handleChangeCVC = (e) => setCvc(e.target.value);
 
-   const handlePaymentcart = (event) => {
-    event.preventDefault();
-    console.log(cardNumber, expiryDate, cvc);
-   }
-   
 
     useEffect(() => {
         const fetchUserId = async () => {
@@ -190,16 +175,21 @@ function AuthUserOrder({ userId, setUserId }) {
     };
 
     const verifyOtp = async () => {
+        if (!email || !otp) {
+            toast.error('Email and OTP are required.');
+            return;
+        }
+    
         try {
             const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
-
+    
             if (response.data.success) {
                 setOtpVerified(true);
                 setUserId(response.data.userId);
                 toast.success('OTP verified successfully!');
-
+    
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
+    
                 for (const item of cartItems) {
                     try {
                         await axios.post(`http://localhost:8081/orderdetails/movecartItems`, { userId: response.data.userId, productId: item.productId, quantity: item.quantity });
@@ -212,22 +202,28 @@ function AuthUserOrder({ userId, setUserId }) {
                 toast.error('OTP verification failed.');
             }
         } catch (error) {
-            toast.error('Error verifying OTP: ' + error.message);
+            console.error('Error verifying OTP:', error);
+            toast.error(`Error verifying OTP: ${error.response?.data?.message || error.message}`);
         }
     };
-
+    
     const verifyNewUserOtp = async () => {
+        if (!email || !otp) {
+            toast.error('Email and OTP are required.');
+            return;
+        }
+    
         try {
             const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
-
+    
             if (response.data.success) {
                 setOtpVerified(true);
                 setUserId(response.data.userId);
                 setRegisterMessage(response.data);
                 toast.success('OTP verified successfully!');
-
+    
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
+    
                 for (const item of cartItems) {
                     try {
                         await axios.post(`http://localhost:8081/orderdetails/movecartItems`, { userId: response.data.userId, productId: item.productId, quantity: item.quantity });
@@ -235,16 +231,16 @@ function AuthUserOrder({ userId, setUserId }) {
                         console.error('Error moving cart item:', error);
                     }
                 }
-
                 localStorage.removeItem('cartItems');
             } else {
                 toast.error('OTP verification failed.');
             }
         } catch (error) {
-            toast.error('Error verifying OTP: ' + error.message);
+            console.error('Error verifying OTP:', error);
+            toast.error(`Error verifying OTP: ${error.response?.data?.message || error.message}`);
         }
     };
-
+    
     const handleUpdateDetails = async (event) => {
         event.preventDefault();
         const err = Validation(values);
@@ -439,38 +435,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     <div className="shadow p-3 bg-body rounded"><button className="btn btn-primary" onClick={handleAddnewAddress}>Add New Address</button></div>
                                                     {addNewAddress ?
                                                         <>
-                                                            <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
-                                                                <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Please Add Your Address Details</p>
-                                                            </div>
-                                                            <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                                                <form onSubmit={handleSubmit}>
-                                                                    <div className="row">
-                                                                        <div className="mt-3 col-6">
-                                                                            <label>Phone Number</label>
-                                                                            <PhoneInput ref={ref} defaultCountry="IN" placeholder="Enter your phone" onChange={(value) => handleInputChange('phone', value)} />
-                                                                            {errors.phone && <span style={{ color: "red" }}>{errors.phone}</span>}
-                                                                        </div>
-                                                                        <div className="mt-3 col-6">
-                                                                            <label>Address</label>
-                                                                            <input type="text" name="Address" className="form-control input" placeholder="Enter Your Address" onChange={(e) => handleInputChange('Address', e.target.value)} />
-                                                                            {errors.Address && <span style={{ color: "red" }}>{errors.Address}</span>}
-                                                                        </div>
-                                                                        <div className="mt-3 col-6">
-                                                                            <label>City</label>
-                                                                            <input type="text" name="City" placeholder="Enter City" className="form-control input" onChange={(e) => handleInputChange('City', e.target.value)} />
-                                                                            {errors.City && <span style={{ color: "red" }}>{errors.City}</span>}
-                                                                        </div>
-                                                                        <div className="mt-3 col-6">
-                                                                            <label>Zip Code</label>
-                                                                            <input type="text" name="zip_Code" placeholder="Enter Zipcode" className="form-control input" onChange={(e) => handleInputChange('zip_Code', e.target.value)} />
-                                                                            {errors.zip_Code && <span style={{ color: "red" }}>{errors.zip_Code}</span>}
-                                                                        </div>
-                                                                    </div>
-                                                                    <button className="btn btn-primary mt-3" type="submit" >
-                                                                        Add Address
-                                                                    </button>
-                                                                </form>
-                                                            </div>
+                                                             <AddNewAddress setUserOrderAddressDetails={setUserOrderAddressDetails} setaddNewAddress={setaddNewAddress} addNewAddress={addNewAddress} setAddress={setAddress} userId={userId} setCheckUserId={setCheckUserId}/>
                                                         </>
                                                         : ""}
                                                 </>
@@ -481,45 +446,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                         <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Payment Details</p>
                                                     </div>
                                                     <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                                        <PaymentInputsContainer>
-                                                            {({ meta, getCardNumberProps, getExpiryDateProps, getCVCProps, images, getCardImageProps }) => {
-                                                                return (
-                                                                    <div className="row">
-                                                                        {meta.focused !== undefined && (
-                                                                            <h6>{meta.error && <span className="text-danger">{meta.error}</span>}</h6>
-                                                                        )}
-                                                                        <label htmlFor="cardnumber">Card Number</label>
-                                                                        <div className="card-input-wrapper">
-                                                                            <svg {...getCardImageProps({ images })} />
-                                                                            <input
-                                                                                {...getCardNumberProps({ onChange: handleChangeCardNumber })}
-                                                                                value={cardNumber}
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                        <div className="row mt-3">
-                                                                            <div className="col-6">
-                                                                                <label htmlFor="expiryDate">Expiry Date</label>
-                                                                                <input
-                                                                                    {...getExpiryDateProps({ onChange: handleChangeExpiryDate })}
-                                                                                    value={expiryDate}
-                                                                                    className="form-control"
-                                                                                />
-                                                                            </div>
-                                                                            <div className="col-6">
-                                                                                <label htmlFor="cvc">CVC</label>
-                                                                                <input
-                                                                                    {...getCVCProps({ onChange: handleChangeCVC })}
-                                                                                    value={cvc}
-                                                                                    className="form-control"
-                                                                                />
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                );
-                                                            }}
-                                                        </PaymentInputsContainer>
-                                                        <button className="btn btn-success"  onClick={handlePaymentcart}>Submit</button>
+                                                    <PaymentInput  userId={userId}/>
 
                                                     </div>
                                                 </>
