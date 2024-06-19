@@ -17,7 +17,7 @@ import AllCustomer from './admin/Customer/AllCustomer';
 import Shop from './user/ShopPage/Shop';
 import Login from './user/Login/Login';
 import OrderDetails from './user/orders/orderdetails';
-
+import PaymentInputs from './user/orders/PaymentInputs';
 function App() {
     const [userId, setUserId] = useState(null);
 
@@ -50,6 +50,7 @@ function App() {
                 <Route path='/addtocart' element={<Addtocart userId={userId} setUserId={setUserId} />} />
                 <Route path='/shop' element={<Shop userId={userId} setUserId={setUserId} />} />
                 <Route path='/orders' element={<OrderDetails userId={userId} setUserId={setUserId} />} />
+                <Route path='/paymentInput' element={<PaymentInputs />} />
         
                 {/* All Admin area routes */}
                 <Route path='/AdminProductView/:id' element={<ProductView />} />
