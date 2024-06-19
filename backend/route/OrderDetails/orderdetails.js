@@ -48,7 +48,7 @@ router.get('/orderUserId/:userId', (req, res) => {
 router.get('/updateAddress/:selectedAddressId', (req,res) => {
 
    const selectedAddressId = req.params.selectedAddressId;
-//    console.log(userId);
+
    const sql = `SELECT * FROM order_address WHERE id = ?`;
    db.query(sql, [selectedAddressId], (err, addressDetails) => {
     if (err) {
