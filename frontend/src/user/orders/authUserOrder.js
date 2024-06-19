@@ -44,12 +44,17 @@ function AuthUserOrder({ userId, setUserId }) {
     const [cardNumber, setCardNumber] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [cvc, setCvc] = useState('');
-    const [showErrors, setshowErrors] = useState(false);
-
+    
 
     const handleChangeCardNumber = (e) => setCardNumber(e.target.value);
     const handleChangeExpiryDate = (e) => setExpiryDate(e.target.value);
     const handleChangeCVC = (e) => setCvc(e.target.value);
+
+   const handlePaymentcart = async (event) => {
+    event.preventDefault();
+    console.log(cardNumber, expiryDate, cvc);
+   }
+   
 
     useEffect(() => {
         const fetchUserId = async () => {
@@ -390,10 +395,12 @@ function AuthUserOrder({ userId, setUserId }) {
                                                                     <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {values.Address}
                                                                 </p>
                                                             ) : (
-                                                                getUpdateAddress.map((item) => (
-                                                                    <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
-                                                                        <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {item.Address}
-                                                                    </p>
+                                                                getUpdateAddress.map((item, index) => (
+                                                                    <div key={index}>
+                                                                        <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>
+                                                                            <IoCheckmark style={{ color: "green", fontSize: "33px" }} /> {item.Address}
+                                                                        </p>
+                                                                    </div>
                                                                 ))
                                                             )}
 
@@ -475,21 +482,44 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     </div>
                                                     <div style={{ background: "lightgrey", padding: "3% 4%" }}>
                                                         <PaymentInputsContainer>
-                                                            {({ meta, getCardNumberProps, getExpiryDateProps, getCVCProps }) => {
-                                                                console.log(meta); 
+                                                            {({ meta, getCardNumberProps, getExpiryDateProps, getCVCProps, images, getCardImageProps }) => {
                                                                 return (
-                                                                    <div>
-                                                                        <input {...getCardNumberProps({ onChange: handleChangeCardNumber })} value={cardNumber} />
-                                                                        <input {...getExpiryDateProps({ onChange: handleChangeExpiryDate })} value={expiryDate} />
-                                                                        <input {...getCVCProps({ onChange: handleChangeCVC })} value={cvc} />
-                                                                        if(!meta.fouced === "undefind") {
-                                                                            <h6>{meta.error && <span>Error: {meta.error}</span>}</h6>
-                                                                        }
-                                                                        
+                                                                    <div className="row">
+                                                                        {meta.focused !== undefined && (
+                                                                            <h6>{meta.error && <span className="text-danger">{meta.error}</span>}</h6>
+                                                                        )}
+                                                                        <label htmlFor="cardnumber">Card Number</label>
+                                                                        <div className="card-input-wrapper">
+                                                                            <svg {...getCardImageProps({ images })} />
+                                                                            <input
+                                                                                {...getCardNumberProps({ onChange: handleChangeCardNumber })}
+                                                                                value={cardNumber}
+                                                                                className="form-control"
+                                                                            />
+                                                                        </div>
+                                                                        <div className="row mt-3">
+                                                                            <div className="col-6">
+                                                                                <label htmlFor="expiryDate">Expiry Date</label>
+                                                                                <input
+                                                                                    {...getExpiryDateProps({ onChange: handleChangeExpiryDate })}
+                                                                                    value={expiryDate}
+                                                                                    className="form-control"
+                                                                                />
+                                                                            </div>
+                                                                            <div className="col-6">
+                                                                                <label htmlFor="cvc">CVC</label>
+                                                                                <input
+                                                                                    {...getCVCProps({ onChange: handleChangeCVC })}
+                                                                                    value={cvc}
+                                                                                    className="form-control"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 );
                                                             }}
                                                         </PaymentInputsContainer>
+                                                        <button className="btn btn-success"  onClick={handlePaymentcart}>Submit</button>
 
                                                     </div>
                                                 </>
