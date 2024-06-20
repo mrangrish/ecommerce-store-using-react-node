@@ -117,10 +117,12 @@ function Shop({ userId, setUserId }) {
     return (
         <>
             <Header userId={userId} setUserId={setUserId} addtocartcount={addtocartcount} localStoragecount={localStoragecount} />
-            <div className="container mt-5">
+        
+            <div className="container mt-5 r1">
+        
                 <h4 className="text-center">Shop</h4>
+
                 <ToastContainer
-                    position="top-right"
                     autoClose={5000}
                     hideProgressBar={false}
                     newestOnTop={false}
@@ -129,12 +131,6 @@ function Shop({ userId, setUserId }) {
                     pauseOnFocusLoss
                     draggable
                     pauseOnHover
-                    toastStyle={{
-                        position: "relative",
-                        top: "0px",
-                        right: "0px",
-                        zIndex: 9999,
-                    }}
                 />
                 <hr />
                 <div className="mt-4">
