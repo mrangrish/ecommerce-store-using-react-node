@@ -11,6 +11,7 @@ import RegisterUser from "./RegsiterUser";
 import UserAddressForm from "./UserAddressForm";
 import AddNewAddress from './AddNewAddress';
 import PaymentInput from "./PaymentInputs";
+
 function AuthUserOrder({ userId, setUserId }) {
     const ref = createRef();
     const [values, setValues] = useState({
@@ -22,6 +23,7 @@ function AuthUserOrder({ userId, setUserId }) {
         name: '',
         password_view: '',
     });
+
     const [list, setList] = useState(false)
     const [addNewAddress, setaddNewAddress] = useState(false);
     const [checkUserId, setCheckUserId] = useState([]);
@@ -38,6 +40,7 @@ function AuthUserOrder({ userId, setUserId }) {
     const [selectedAddressId, setSelectedAddressId] = useState('');
     const [getUpdateAddress, setgetUpdateAddress] = useState([]);
     const [openPayment, setopenPayment] = useState([]);
+    const [opencardInput, setopencardInput] = useState([]);
 
     useEffect(() => {
         const fetchUserId = async () => {
@@ -58,6 +61,7 @@ function AuthUserOrder({ userId, setUserId }) {
                     });
                 } else if (userResponse.status === 200 && data.length > 0) {
                     setAddress('');
+                    setopenPayment(!openPayment);
                     setValues({
                         phone: data[0]?.phone || '',
                         Address: data[0]?.Address || '',
@@ -79,13 +83,15 @@ function AuthUserOrder({ userId, setUserId }) {
         }
     }, [userId]);
 
-    useEffect(() => {
-        if (checkUserId.length > 0) {
-            $('#checkuserid').css('display', 'none');
-        } else {
-            $('#checkuserid').css('display', 'block');
-        }
-    }, [checkUserId.length]);
+    
+        const userSessionid = sessionStorage.getItem('userId');
+
+            if (userSessionid === "null") { 
+                $('#checkuserid').css('display', 'block');
+            } else {
+                $('#checkuserid').css('display', 'none');
+            }
+    
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -107,6 +113,7 @@ function AuthUserOrder({ userId, setUserId }) {
                         });
                     } else if (userResponse.status === 200 && userResponse.data.length > 0) {
                         setAddress('');
+                        setopenPayment(!openPayment);
                         setValues({
                             phone: userResponse.data[0].phone,
                             Address: userResponse.data[0].Address,
@@ -258,9 +265,10 @@ function AuthUserOrder({ userId, setUserId }) {
         e.preventDefault()
         if (e.target.value) {
             setList(!list)
-            setopenPayment(!openPayment);
+
         }
         setList(!list)
+        setopenPayment(!openPayment);
     }
 
     const handleAddnewAddress = async (e) => {
@@ -288,6 +296,13 @@ function AuthUserOrder({ userId, setUserId }) {
         fetchSelectedAddressId();
     })
 
+    const openCreditCard = async (e) => {
+        e.preventDefault();
+        if (e.target.value) {
+            setopencardInput(!opencardInput);
+        }
+    }
+
     return (
         <div className="container-fluid mt-5">
             <div className="row justify-content-center">
@@ -297,8 +312,8 @@ function AuthUserOrder({ userId, setUserId }) {
                 ) : (
                     <div className="col-md-7">
                         {checkUserId.length === 0 ? (
-                            <>
-                                <div id="checkuserid" style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
+                            <div id="checkuserid">
+                                <div  style={{ margin: "0 0", color: "white", background: "lightseagreen"}} className="shadow rounded p-3">
                                     <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
                                 </div>
                                 {!otpVerified ? (
@@ -355,7 +370,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                         Payment Details
                                     </p>
                                 </div>
-                            </>
+                            </div>
                         ) : (
                             <>
                                 <>
@@ -446,8 +461,11 @@ function AuthUserOrder({ userId, setUserId }) {
                                                         <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Payment Details</p>
                                                     </div>
                                                     <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                                        <PaymentInput userId={userId} />
 
+                                                        <input type="radio" onClick={openCreditCard} /> Credit card/ Debit Card
+                                                        {!opencardInput ?
+                                                            <PaymentInput userId={userId} />
+                                                            : ''}
                                                     </div>
                                                 </>
                                                 : <div style={{ margin: "0 0", color: "black", background: "white" }} className="shadow rounded p-3">
