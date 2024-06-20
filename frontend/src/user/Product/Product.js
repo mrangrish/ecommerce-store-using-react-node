@@ -18,6 +18,25 @@ function Product({ userId, setUserId }) {
     const [color, setcolor] = useState([]);
     const [brand, setbrand] = useState([]);
 
+    const [addtocartcount, setAddtocartcount] = useState(0);
+    const [localStoragecount, setLocalStoragecount] = useState(0);
+
+    useEffect(() => {
+        const fetchAddtocartCount = async () => {
+            try {
+                if (userId) {
+                    const response = await axios.get(`http://localhost:8081/routeaddtocart/addtocartcount/${userId}`);
+                    setAddtocartcount(response.data.count);
+                } else {
+                    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                    setLocalStoragecount(cartItems.length);
+                }
+            } catch (error) {
+                console.error('Error fetching Addtocart count:', error);
+            }
+        };
+        fetchAddtocartCount();
+    }, [userId]);
 
     const [filters, setFilters] = useState({ subcategories: [], colors: [], brands: [] });
     const getCategoryFromUrl = () => {
@@ -138,7 +157,7 @@ function Product({ userId, setUserId }) {
 
     return (
         <div>
-            <Header userId={userId} setUserId={setUserId} />
+            <Header userId={userId} setUserId={setUserId} addtocartcount={addtocartcount} localStoragecount={localStoragecount}/>
             <div className="container mt-5">
                 <ToastContainer
                     position="top-right"
