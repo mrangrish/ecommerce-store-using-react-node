@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInr, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { IoArrowBackOutline } from "react-icons/io5";
 
-function Authaddtocart({ userId }) {
+function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
     const [addtocart, setAddtocart] = useState([]);
-    const [addtocartcount, setAddtocartcount] = useState(0);
+    // const [addtocartcount, setAddtocartcount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [discount, setDiscount] = useState(0);
 
@@ -42,6 +42,7 @@ function Authaddtocart({ userId }) {
                 if (userId) {
                     const response = await axios.get(`http://localhost:8081/routeaddtocart/Getaddtocart/${userId}`);
                     setAddtocart(response.data);
+                    
                 }
             } catch (error) {
                 console.log(error);
@@ -85,19 +86,28 @@ function Authaddtocart({ userId }) {
         }
     };
 
+    
+    const calculateDiscountPercentage = (originalPrice, offerPrice) => {
+        const discountPercentage = ((originalPrice - offerPrice) / originalPrice) * 100;
+        return Math.round(discountPercentage);
+    };
+
     const handleIncrement = async (addtocartId, quantity) => {
         try {
-            const response = await axios.get(`http://localhost:8081/routeaddtocart/checkStock/${addtocartId}/${quantity + 1}`);
+            // console.log(addtocartId,quantity);
+            const incrementedQuantity = parseInt(quantity) + 1;
+            const response = await axios.get(`http://localhost:8081/routeaddtocart/checkStock/${addtocartId}/${incrementedQuantity}`);
+            
             if (response.data.stockAvailable) {
                 const updatedAddtocart = addtocart.map(item => {
                     if (item.id === addtocartId) {
-                        return { ...item, quantity: parseInt(quantity) + parseInt(1) };
+                        return { ...item, quantity: parseInt(quantity) + 1 };
                     }
                     return item;
                 });
                 setAddtocart(updatedAddtocart);
-                await axios.put(`http://localhost:8081/routeaddtocart/updatequantity/${addtocartId}/${quantity + 1}`);
-
+                
+                await axios.put(`http://localhost:8081/routeaddtocart/updatequantity/${addtocartId}/${incrementedQuantity}`);
             } else {
                 console.log("Insufficient stock!");
             }
@@ -105,25 +115,24 @@ function Authaddtocart({ userId }) {
             console.error('Error incrementing quantity:', error);
         }
     };
-
-    const calculateDiscountPercentage = (originalPrice, offerPrice) => {
-        const discountPercentage = ((originalPrice - offerPrice) / originalPrice) * 100;
-        return Math.round(discountPercentage);
-    };
-
+    
     const handleDecrement = async (addtocartId, quantity) => {
-        if (quantity > 1) {
-            const updatedAddtocart = addtocart.map(item => {
-                if (item.id === addtocartId) {
-                    return { ...item, quantity: quantity - 1 };
-                }
-                return item;
-            });
-            setAddtocart(updatedAddtocart);
-            await axios.put(`http://localhost:8081/routeaddtocart/updatequantity/${addtocartId}/${quantity - 1}`);
+        try {
+            if (quantity > 1) {
+                const updatedAddtocart = addtocart.map(item => {
+                    if (item.id === addtocartId) {
+                        return { ...item, quantity: quantity - 1 };
+                    }
+                    return item;
+                });
+                setAddtocart(updatedAddtocart);
+                await axios.put(`http://localhost:8081/routeaddtocart/updatequantity/${addtocartId}/${quantity - 1}`);
+            }
+        } catch (error) {
+            console.error('Error decrementing quantity:', error);
         }
     };
-
+    
 
     return (
         <>
@@ -143,10 +152,10 @@ function Authaddtocart({ userId }) {
                                     </div>
                                     <div className="col-3">
                                     
-                                        <button onClick={(e) => { e.preventDefault(); handleDecrement(item.originalIndex); }} style={{ background: "transparent", border: "none" }}><FontAwesomeIcon icon={faMinus} style={{ fontSize: "xx-small", border: "1px solid lightgrey", padding: "7px 7px", borderRadius: "25px" }} /></button>
+                                        <button onClick={(e) => { e.preventDefault(); handleDecrement(item.id, item.quantity); }} style={{ background: "transparent", border: "none" }}><FontAwesomeIcon icon={faMinus} style={{ fontSize: "xx-small", border: "1px solid lightgrey", padding: "7px 7px", borderRadius: "25px" }} /></button>
 
                                         <span style={{ border: "1px solid lightgrey", textAlign: "center", padding: "11px 24px" }}>{item.quantity}</span>
-                                        <button onClick={(e) => { e.preventDefault(); handleIncrement(item.originalIndex); }} style={{ background: "transparent", border: "none" }}><FontAwesomeIcon icon={faPlus} style={{ fontSize: "xx-small", border: "1px solid lightgrey", padding: "7px 7px", borderRadius: "25px" }} /></button>
+                                        <button onClick={(e) => { e.preventDefault(); handleIncrement(item.id, item.quantity); }} style={{ background: "transparent", border: "none" }}><FontAwesomeIcon icon={faPlus} style={{ fontSize: "xx-small", border: "1px solid lightgrey", padding: "7px 7px", borderRadius: "25px" }} /></button>
                                     </div>
                                     <div className="col-3">
                                         {item.product_offerPrice ? (
