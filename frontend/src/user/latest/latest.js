@@ -62,11 +62,8 @@ function Latest({ userId }) {
     };
 
     return (
-        <div>
-            <h1 className="text-center mt-5 mb-5">Latest Products</h1>
-            <div className="container mb-5">
-            <ToastContainer
-                    position="top-right"
+        <div className="r1">
+                <ToastContainer
                     autoClose={5000}
                     hideProgressBar={false}
                     newestOnTop={false}
@@ -76,6 +73,9 @@ function Latest({ userId }) {
                     draggable
                     pauseOnHover
                 />
+            <h1 className="text-center mt-5 mb-5">Latest Products</h1>
+            <div className="container mb-5">
+        
                 <div className="row">
                 {products.map((item, index) => (
                         <div key={index} className="col-md-3 col-sm-6" data-aos="fade-up">
