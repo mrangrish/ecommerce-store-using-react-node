@@ -177,17 +177,17 @@ function AuthUserOrder({ userId, setUserId }) {
             toast.error('Email and OTP are required.');
             return;
         }
-    
+
         try {
             const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
-    
+
             if (response.data.success) {
                 setOtpVerified(true);
                 setUserId(response.data.userId);
                 toast.success('OTP verified successfully!');
-    
+
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    
+
                 for (const item of cartItems) {
                     try {
                         await axios.post(`http://localhost:8081/orderdetails/movecartItems`, { userId: response.data.userId, productId: item.productId, quantity: item.quantity });
@@ -204,24 +204,24 @@ function AuthUserOrder({ userId, setUserId }) {
             toast.error(`Error verifying OTP: ${error.response?.data?.message || error.message}`);
         }
     };
-    
+
     const verifyNewUserOtp = async () => {
         if (!email || !otp) {
             toast.error('Email and OTP are required.');
             return;
         }
-    
+
         try {
             const response = await axios.post('http://localhost:8081/mailverified/verify-email-otp', { email, otp }, { withCredentials: true });
-    
+
             if (response.data.success) {
                 setOtpVerified(true);
                 setUserId(response.data.userId);
                 setRegisterMessage(response.data);
                 toast.success('OTP verified successfully!');
-    
+
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    
+
                 for (const item of cartItems) {
                     try {
                         await axios.post(`http://localhost:8081/orderdetails/movecartItems`, { userId: response.data.userId, productId: item.productId, quantity: item.quantity });
@@ -238,7 +238,7 @@ function AuthUserOrder({ userId, setUserId }) {
             toast.error(`Error verifying OTP: ${error.response?.data?.message || error.message}`);
         }
     };
-    
+
     const handleUpdateDetails = async (event) => {
         event.preventDefault();
         const err = Validation(values);
@@ -258,6 +258,7 @@ function AuthUserOrder({ userId, setUserId }) {
         e.preventDefault()
         if (e.target.value) {
             setList(!list)
+            setopenPayment(!openPayment);
         }
         setList(!list)
     }
@@ -433,10 +434,11 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     <div className="shadow p-3 bg-body rounded"><button className="btn btn-primary" onClick={handleAddnewAddress}>Add New Address</button></div>
                                                     {addNewAddress ?
                                                         <>
-                                                             <AddNewAddress setUserOrderAddressDetails={setUserOrderAddressDetails} setaddNewAddress={setaddNewAddress} addNewAddress={addNewAddress} setAddress={setAddress} userId={userId} setCheckUserId={setCheckUserId}/>
+                                                            <AddNewAddress setUserOrderAddressDetails={setUserOrderAddressDetails} setaddNewAddress={setaddNewAddress} addNewAddress={addNewAddress} setAddress={setAddress} userId={userId} setCheckUserId={setCheckUserId} />
                                                         </>
                                                         : ""}
                                                 </>
+
                                             }
                                             {!openPayment ?
                                                 <>
@@ -444,7 +446,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                         <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Payment Details</p>
                                                     </div>
                                                     <div style={{ background: "lightgrey", padding: "3% 4%" }}>
-                                                    <PaymentInput  userId={userId}/>
+                                                        <PaymentInput userId={userId} />
 
                                                     </div>
                                                 </>
@@ -454,6 +456,7 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     </p>
                                                 </div>
                                             }
+
                                         </>
                                     )}
                                 </>
