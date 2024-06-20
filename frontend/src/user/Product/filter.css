@@ -242,3 +242,17 @@
     font-size: 12px;
     font-weight: bold;
 }
+.r1 {
+    position: relative !important;
+
+}
+.Toastify {
+    position: absolute !important;
+    right: 1%;
+    top: -18px;
+}
+.Toastify__toast--success {
+    position: absolute !important;
+    right: 0;
+    top: 0;
+}
