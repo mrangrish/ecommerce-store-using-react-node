@@ -137,22 +137,22 @@ function Product({ userId, setUserId }) {
         try {
             if (userId) {
                 await axios.post("http://localhost:8081/routeaddtocart/cart", { users_id: userId, product_id: productId });
-
-                toast.success('Product add to cart successfully!');
+                setAddtocartcount(prevCount => prevCount + 1); 
+                toast.success('Product added to cart successfully!');
             } else {
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                 const created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 cartItems.push({ productId, quantity: 1, product_name, product_price, product_brand, product_image, product_offerPrice, created_at });
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                console.log(cartItems);
-                toast.success('Product add to cart successfully!');
+                setLocalStoragecount(prevCount => prevCount + 1); 
+                toast.success('Product added to cart successfully!');
             }
         } catch (error) {
             console.error("Error adding item to cart:", error);
-            toast.error('Product is not add to cart!');
+            toast.error('Failed to add product to cart!');
         }
     };
-
+    
 
 
     return (
