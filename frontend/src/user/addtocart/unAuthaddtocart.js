@@ -4,9 +4,9 @@ import { faInr, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 
-function UnAuthaddtocart() {
+function UnAuthaddtocart({setLocalStoragecount, localStoragecount}) {
     const [items, setItems] = useState([]);
-    const [localStoragecount, setlocalStoragecount] = useState(0);
+    // const [localStoragecount, setlocalStoragecount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [discount, setDiscount] = useState(0);
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ function UnAuthaddtocart() {
         const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
         const itemsWithOriginalIndex = cartItems.map((item, index) => ({ ...item, originalIndex: index }));
         setItems(itemsWithOriginalIndex);
-        setlocalStoragecount(itemsWithOriginalIndex.length);
+        setLocalStoragecount(itemsWithOriginalIndex.length);
 
         const totalPrice = itemsWithOriginalIndex.reduce((total, item) => {
             return total + parseFloat(item.product_offerPrice || item.product_price) * parseInt(item.quantity || 1);
@@ -52,7 +52,7 @@ function UnAuthaddtocart() {
         cartItems.splice(index, 1);
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
         setItems(cartItems);
-        setlocalStoragecount(cartItems.length);
+        setLocalStoragecount(cartItems.length);
 
         const totalPrice = cartItems.reduce((total, item) => {
             return total + parseFloat(item.product_offerPrice || item.product_price) * parseInt(item.quantity || 1);
