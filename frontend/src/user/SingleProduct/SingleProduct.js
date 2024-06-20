@@ -9,7 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function SingleProduct({ userId, setUserId }) {
-
+  const [addtocartcount, setAddtocartcount] = useState(0);
+  const [localStoragecount, setLocalStoragecount] = useState(0);
   const [singleProduct, setSingleProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [mainImage, setMainImage] = useState('');
@@ -23,6 +24,23 @@ function SingleProduct({ userId, setUserId }) {
   useEffect(() => {
     AOS.init();
   }, []);
+
+  useEffect(() => {
+    const fetchAddtocartCount = async () => {
+        try {
+            if (userId) {
+                const response = await axios.get(`http://localhost:8081/routeaddtocart/addtocartcount/${userId}`);
+                setAddtocartcount(response.data.count);
+            } else {
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                setLocalStoragecount(cartItems.length);
+            }
+        } catch (error) {
+            console.error('Error fetching Addtocart count:', error);
+        }
+    };
+    fetchAddtocartCount();
+}, [userId]);
 
   useEffect(() => {
     const fetchSingleProduct = async () => {
@@ -92,7 +110,8 @@ function SingleProduct({ userId, setUserId }) {
 
   return (
     <>
-      <Header userId={userId} setUserId={setUserId} />
+        <Header userId={userId} setUserId={setUserId} addtocartcount={addtocartcount} localStoragecount={localStoragecount} />
+    
       <div className="container my-5">
       <ToastContainer
                         position="top-right"

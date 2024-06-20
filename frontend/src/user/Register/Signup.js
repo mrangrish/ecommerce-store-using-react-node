@@ -18,7 +18,27 @@ function Signup({ userId, setUserId }) {
   const [userInput, setUserInput] = useState('');
   const [captchaError, setCaptchaError] = useState('');
   const canvasRef = useRef(null);
-  
+  const [addtocartcount, setAddtocartcount] = useState(0);
+  const [localStoragecount, setLocalStoragecount] = useState(0);
+
+
+  useEffect(() => {
+    const fetchAddtocartCount = async () => {
+        try {
+            if (userId) {
+                const response = await axios.get(`http://localhost:8081/routeaddtocart/addtocartcount/${userId}`);
+                setAddtocartcount(response.data.count);
+            } else {
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                setLocalStoragecount(cartItems.length);
+            }
+        } catch (error) {
+            console.error('Error fetching Addtocart count:', error);
+        }
+    };
+    fetchAddtocartCount();
+}, [userId]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -131,7 +151,8 @@ function Signup({ userId, setUserId }) {
 
   return (
     <>
-      <Header userId={userId} setUserId={setUserId} />
+      <Header userId={userId} setUserId={setUserId} addtocartcount={addtocartcount} localStoragecount={localStoragecount} />
+
       <div className="container">
         <div className="row m-5 no-gutters shadow-lg">
           <div className="col-md-7 bg-white p-5">

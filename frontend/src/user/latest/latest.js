@@ -27,7 +27,6 @@ function Latest({ userId }) {
         };
         fetchData();
     }, []);
-
     const getImageUrl = (jsonString) => {
         try {
             const images = JSON.parse(jsonString);
