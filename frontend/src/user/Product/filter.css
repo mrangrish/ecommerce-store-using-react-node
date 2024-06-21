@@ -244,15 +244,21 @@
 }
 .r1 {
     position: relative !important;
+}
 
-}
 .Toastify {
-    position: absolute !important;
-    right: 1%;
-    top: -18px;
+    position: fixed;
+    top: 2rem;
+    right: 1rem;
+    z-index: 9999;
 }
+
 .Toastify__toast--success {
-    position: absolute !important;
-    right: 0;
-    top: 0;
+    background: #5cb85c;
+    color: #fff;
+}
+
+.Toastify__toast--error {
+    background: #d9534f;
+    color: #fff;
 }
