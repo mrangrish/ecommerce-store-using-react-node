@@ -87,6 +87,7 @@ function Shop({ userId, setUserId }) {
                     }
                 );
                 toast.success("Product added to cart successfully!");
+                setAddtocartcount(prevCount => prevCount + 1); 
             } else {
                 const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
                 const created_at = new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -102,6 +103,7 @@ function Shop({ userId, setUserId }) {
                 });
                 localStorage.setItem("cartItems", JSON.stringify(cartItems));
                 toast.success("Product added to cart successfully!");
+                setLocalStoragecount(prevCount => prevCount + 1); 
             }
         } catch (error) {
             toast.error("Failed to add product to cart!");
