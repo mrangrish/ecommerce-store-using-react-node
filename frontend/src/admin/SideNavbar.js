@@ -6,20 +6,10 @@ import
 
  import { IoBagOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
-function SideNavbar({openSidebarToggle, OpenSidebar, adminId, adminName}) {
-    const navigate = useNavigate();
+function SideNavbar({openSidebarToggle, OpenSidebar}) {
+    // const navigate = useNavigate();
   
-    const handleOpenProduct = () => {
-        navigate(`/AllProduct`, { state: { adminId: adminId, adminName: adminName } });
-      };
-
-      const handleOpenDashboard = () => {
-        navigate(`/dash`, { state: {adminId: adminId, adminName: adminName}});
-      };
     
-      const handleOpenCustomer = () => {
-        navigate(`/AllCustomer`, { state: {adminId: adminId, adminName: adminName} });
-      }
   return (
     <aside id="sidebar" className={openSidebarToggle ? "sidebar-responsive": ""}>
         <div className='sidebar-title'>
@@ -31,26 +21,27 @@ function SideNavbar({openSidebarToggle, OpenSidebar, adminId, adminName}) {
 
         <ul className='sidebar-list'>
             <li className='sidebar-list-item'>
-                <button onClick={handleOpenDashboard} className='SideBar-button'>
+                <Link to="/dash" className='SideBar-button'>
                     <BsGrid1X2Fill className='icon'/> Dashboard
-                </button>
+                </Link>
             </li>
             <li className='sidebar-list-item'>
-                {/* <Link to="/AllProduct"> */}
-                <button onClick={handleOpenProduct} className='SideBar-button'>
+                <Link to="/AllProduct">
+        
                     <BsFillArchiveFill className='icon'/> Products
-                    </button>
-                {/* </Link> */}
+                    
+                </Link>
             </li>
             <li className='sidebar-list-item'>
-            <button className='SideBar-button'>
+            <Link to="#">
                     <BsFillGrid3X3GapFill className='icon'/> Categories
-                </button>
+                    </Link>
             </li>
             <li className='sidebar-list-item'>
-            <button className='SideBar-button' onClick={handleOpenCustomer}>
+            <Link to="/AllCustomer"> 
                     <BsPeopleFill className='icon'/> Customers
-                </button>
+            
+                </Link>
             </li>
         </ul>
     </aside>
