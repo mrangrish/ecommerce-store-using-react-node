@@ -53,13 +53,13 @@ function App() {
                 <Route path='/paymentInput' element={<PaymentInputs />} />
         
                 {/* All Admin area routes */}
-                <Route path='/AdminProductView/:id' element={<ProductView />} />
-                <Route path='/AdminProductEdit/:id' element={<AdminProductEdit />} />
-                <Route path='/AllCustomer' element={<AllCustomer />} />
-                <Route path='/dash' element={<Dashboard />} />
-                <Route path='/admin-login' element={<Adminlogin />} />
-                <Route path='/addproduct' element={<Addproduct />} />
-                <Route path='/AllProduct' element={<AllProduct />} />
+                <Route path='/AdminProductView/:id' element={<ProductView />} setUserId={setUserId} userId={userId}/>
+                <Route path='/AdminProductEdit/:id' element={<AdminProductEdit />} setUserId={setUserId} userId={userId}/>
+                <Route path='/AllCustomer' element={<AllCustomer />} setUserId={setUserId} userId={userId}/>
+                <Route path='/dash' element={<Dashboard />} setUserId={setUserId} userId={userId}/>
+                <Route path='/admin-login' element={<Adminlogin />} setUserId={setUserId} userId={userId}/>
+                <Route path='/addproduct' element={<Addproduct />} setUserId={setUserId} userId={userId}/>
+                <Route path='/AllProduct' element={<AllProduct />} setUserId={setUserId} userId={userId}/>
             </Routes>
         </BrowserRouter>
     );
