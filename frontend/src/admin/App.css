@@ -1,4 +1,4 @@
-.sidebar {
+/* .sidebar {
   height: 100vh;
   transition: width 0.3s ease;
   position: fixed;
@@ -11,7 +11,7 @@
 
 .toggle-button {
   top: 10px;
-  left: 100%; /* Position it right outside the sidebar */
+  left: 100%; /* Position it right outside the sidebar 
   cursor: pointer;
 }
 
@@ -30,13 +30,13 @@
   border-radius: 5px;
   margin-top: 10%;
   margin-right: 8%;
-  padding: 20px; /* Added padding for better content visibility */
-  min-height: 300px; /* Minimum height to demonstrate scrollable area if needed */
+  padding: 20px; /* Added padding for better content visibility *
+  min-height: 300px; /* Minimum height to demonstrate scrollable area if needed *
 }
 
-/* Optional: Additional CSS to ensure toast is aligned right inside the content div */
+/* Optional: Additional CSS to ensure toast is aligned right inside the content div *
 .Toastify__toast-container--top-right {
-  top: 1em; /* Adjust top position as necessary */
-  right: 1em; /* Adjust right position as necessary */
-  position: absolute; /* Position relative to content div */
-}
+  top: 1em; /* Adjust top position as necessary *
+  right: 1em; /* Adjust right position as necessary *
+  position: absolute; /* Position relative to content div *
+} */
