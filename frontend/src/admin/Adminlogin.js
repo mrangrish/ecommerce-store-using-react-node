@@ -19,22 +19,24 @@ function Adminlogin() {
         const err = Validation(values);
         setErrors(err);
         if (err.email === "" && err.password === "") {
-            axios.post('http://localhost:8081/adminAuthRouter/adminlogin', values)
-                .then(res => {
-                    if (res.data.errors) {
-                        setBackendError(res.data.errors);
+            axios.post('http://localhost:8081/adminAuthRouter/adminlogin',values, { withCredentials: true })
+            .then(res => {
+                if (res.data.errors) {
+                    setBackendError(res.data.errors);
+                    console.log(res.data.errors);
+                } else {
+                    setBackendError([]);
+                    if (res.data.message === "Login successful") {
+                        setUserId(res.data.userId);
+                        navigate('/dash');
+                    } else if (res.data.error === "Incorrect password") {
+                        alert("Incorrect password");
                     } else {
-                        setBackendError([]);
-                        if (res.data.message === "Login successful") {
-                            navigate('/dash', { state: { adminName: res.data.name, adminId: res.data.id } });
-                        } else if (res.data.error === "Incorrect password") {
-                            alert("Incorrect password");
-                        } else {
-                            alert("No record existed");
-                        }
+                        alert("No record existed");
                     }
-                })
-                .catch(err => console.log(err));
+                }
+            })
+            .catch(err => console.log(err));
         }
     };
 
