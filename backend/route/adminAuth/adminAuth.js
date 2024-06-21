@@ -16,6 +16,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }
 }));
+
 router.post('/adminlogin', [
     check('email').isEmail(),
     check('password').isLength({ min: 6 })
@@ -54,7 +55,7 @@ router.post('/adminlogin', [
     });
 });
 
-router.post('/adminlogout', (req, res) => {
+router.get('/adminlogout', (req, res) => {
     try {
         req.session.destroy((err) => {
             if (err) {
