@@ -2,8 +2,20 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
-const db = require('../db'); 
+const db = require('../db');
+const bodyParser = require('body-parser');
+const app = express();
+const cors = require('cors');
+const session = require('express-session');
 
+app.use(cors());
+app.use(bodyParser.json());
+app.use(session({
+    secret: 'session',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
 router.post('/adminlogin', [
     check('email').isEmail(),
     check('password').isLength({ min: 6 })
@@ -25,17 +37,15 @@ router.post('/adminlogin', [
         }
         const user = data[0];
 
-        bcrypt.compare(password.toString(), user.password, (err, isMatch) => {
+        bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) {
                 console.error('Error comparing passwords:', err);
                 return res.status(500).json({ error: 'Error comparing passwords' });
             }
             if (isMatch) {
-                console.log('Login successful');
-                const adminId = user.id;
-                const adminName = user.name;
-                return res.status(200).json({ message: 'Login successful', name: adminName , id: adminId });
-
+                req.session.userId = user.id;
+                console.log(req.session.userId);
+                return res.status(200).json({ message: 'Login successful' });
             } else {
                 console.log('Incorrect password');
                 return res.status(401).json({ error: 'Incorrect password' });
@@ -43,8 +53,6 @@ router.post('/adminlogin', [
         });
     });
 });
-
-
 
 router.post('/adminlogout', (req, res) => {
     try {
@@ -61,6 +69,5 @@ router.post('/adminlogout', (req, res) => {
         return res.status(500).json({ error: 'Logout failed' });
     }
 });
-
 
 module.exports = router;
