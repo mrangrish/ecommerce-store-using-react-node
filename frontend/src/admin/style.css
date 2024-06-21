@@ -1,3 +1,11 @@
+/* body {
+  margin: 0;
+  padding: 0;
+  background-color: #1d2634 !important;
+  color: #9e9ea4 !important;
+  font-family: 'Montserrat', sans-serif;
+} */
+
 .icon {
   vertical-align: middle;
   line-height: 1px;
@@ -27,73 +35,37 @@
     'sidebar header header header'
     'sidebar main main main';
   height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: #1d2634 !important;
+  color: #9e9ea4 !important;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Header Styles */
-.Dashboard-header {
+/* Header  */
+.header {
   grid-area: header;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30px;
+  padding: 0 30px 0 30px;
   box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
 }
 
-.menu-icon .icon {
-  cursor: pointer;
+.menu-icon {
+  display: none;
 }
+/* End Header  */
 
-.header-left .icon {
-  cursor: pointer;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-right .icon {
-  margin-left: 15px;
-  cursor: pointer;
-}
-
-.dropdown {
-  position: relative;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-menu button {
-  background: none;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-}
-
-.dropdown-menu button:hover {
-  background-color: #f0f0f0;
-}
-
-/* Sidebar Styles */
+/* Sidebar  */
 #sidebar {
   grid-area: sidebar;
   height: 100%;
-  background-color: #ffffff;
+  background-color: #263043;
   overflow-y: auto;
   transition: all 0.5s;
   -webkit-transition: all 0.5s;
-  box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
 }
 
 .sidebar-title {
@@ -120,7 +92,7 @@
 }
 
 .sidebar-list-item {
-  padding: 20px;
+  padding: 20px 20px 20px 20px;
   font-size: 18px;
 }
 
@@ -131,26 +103,34 @@
 
 .sidebar-list-item > a {
   text-decoration: none;
-  color: #000000;
+  color: #9e9ea4;
 }
 
 .sidebar-responsive {
   display: inline !important;
   position: absolute;
+  /*
+    we want the z-index of the sidebar higher so that
+    the charts are not showing over the sidebar 
+    on small screens
+  */
   z-index: 12 !important;
 }
 
-/* Main Content Styles */
-.main-container {
-  grid-area: main;
-  overflow-y: auto;
-  padding: 20px;
+/* End Sidebar  */
+
+
+/* Main  */  
+.main-container-dash {
+  grid-area: main !important;
+  overflow-y: auto !important;
+  padding: 20px 20px !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .main-title {
   display: flex;
   justify-content: space-between;
-  color: #000000;
 }
 
 .main-cards {
@@ -166,8 +146,22 @@
   justify-content: space-around;
   padding: 8px 15px;
   border-radius: 5px;
-  color: black;
-  border: 1px solid;
+}
+
+.card-dash:first-child {
+  background-color: #2962ff !important;
+}
+
+.card-dash:nth-child(2) {
+  background-color: #ff6d00;
+}
+
+.card-dash:nth-child(3) {
+  background-color: #2e7d32;
+}
+
+.card-dash:nth-child(4) {
+  background-color: #d50000;
 }
 
 .card-inner {
@@ -188,7 +182,11 @@
   height: 300px;
 }
 
-/* Responsive Styles */
+/* End Main  */
+
+
+/* Medium <= 992px */
+  
 @media screen and (max-width: 992px) {
   .grid-container {
     grid-template-columns: 1fr;
@@ -210,7 +208,8 @@
     display: inline;
   }
 }
-
+/* Small <= 768px */
+  
 @media screen and (max-width: 768px) {
   .main-cards {
     grid-template-columns: 1fr;
@@ -224,17 +223,15 @@
   }
 }
 
+/* Extra Small <= 576px */
+
 @media screen and (max-width: 576px) {
-  .header-left {
+  .hedaer-left {
     display: none;
   }
 }
 
-.card-title-name {
-  font-size: 1.30rem;
-}
 
-.SideBar-button {
-  background: none;
-  border: none;
+.dt-input option {
+  background-color: #1d2634;
 }
