@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 import Header from '../Header';
-import { useLocation} from 'react-router-dom'
 import SideNavbar from '../SideNavbar';
 import axios from 'axios';
 import Validation from './adminproductvalidation';
