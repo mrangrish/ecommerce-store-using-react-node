@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInr, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { IoArrowBackOutline } from "react-icons/io5";
 
-function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
+function Authaddtocart({ userId, setAddtocartcount, addtocartcount }) {
     const [addtocart, setAddtocart] = useState([]);
     // const [addtocartcount, setAddtocartcount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -42,7 +42,7 @@ function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
                 if (userId) {
                     const response = await axios.get(`http://localhost:8081/routeaddtocart/Getaddtocart/${userId}`);
                     setAddtocart(response.data);
-                    
+
                 }
             } catch (error) {
                 console.log(error);
@@ -86,7 +86,7 @@ function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
         }
     };
 
-    
+
     const calculateDiscountPercentage = (originalPrice, offerPrice) => {
         const discountPercentage = ((originalPrice - offerPrice) / originalPrice) * 100;
         return Math.round(discountPercentage);
@@ -94,10 +94,9 @@ function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
 
     const handleIncrement = async (addtocartId, quantity) => {
         try {
-            // console.log(addtocartId,quantity);
             const incrementedQuantity = parseInt(quantity) + 1;
             const response = await axios.get(`http://localhost:8081/routeaddtocart/checkStock/${addtocartId}/${incrementedQuantity}`);
-            
+
             if (response.data.stockAvailable) {
                 const updatedAddtocart = addtocart.map(item => {
                     if (item.id === addtocartId) {
@@ -106,7 +105,7 @@ function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
                     return item;
                 });
                 setAddtocart(updatedAddtocart);
-                
+
                 await axios.put(`http://localhost:8081/routeaddtocart/updatequantity/${addtocartId}/${incrementedQuantity}`);
             } else {
                 console.log("Insufficient stock!");
@@ -115,7 +114,7 @@ function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
             console.error('Error incrementing quantity:', error);
         }
     };
-    
+
     const handleDecrement = async (addtocartId, quantity) => {
         try {
             if (quantity > 1) {
@@ -132,7 +131,7 @@ function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
             console.error('Error decrementing quantity:', error);
         }
     };
-    
+
 
     return (
         <>
@@ -151,7 +150,7 @@ function Authaddtocart({ userId, setAddtocartcount, addtocartcount}) {
                                         <div className="row">{item.product_name}</div>
                                     </div>
                                     <div className="col-3">
-                                    
+
                                         <button onClick={(e) => { e.preventDefault(); handleDecrement(item.id, item.quantity); }} style={{ background: "transparent", border: "none" }}><FontAwesomeIcon icon={faMinus} style={{ fontSize: "xx-small", border: "1px solid lightgrey", padding: "7px 7px", borderRadius: "25px" }} /></button>
 
                                         <span style={{ border: "1px solid lightgrey", textAlign: "center", padding: "11px 24px" }}>{item.quantity}</span>
