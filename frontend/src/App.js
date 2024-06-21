@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
@@ -18,6 +19,7 @@ import Shop from './user/ShopPage/Shop';
 import Login from './user/Login/Login';
 import OrderDetails from './user/orders/orderdetails';
 import PaymentInputs from './user/orders/PaymentInputs';
+
 function App() {
     const [userId, setUserId] = useState(null);
 
@@ -29,7 +31,6 @@ function App() {
                 });
                 sessionStorage.setItem('userId', response.data.userId);
                 setUserId(response.data.userId);
-
             } catch (error) {
                 console.error('Error fetching session id:', error);
             }
@@ -43,23 +44,23 @@ function App() {
                 {/* All Client area routes */}
                 <Route path='/signup' element={<Signup userId={userId} setUserId={setUserId} />} />
                 <Route path='/' element={<Home userId={userId} setUserId={setUserId} />} />
-                <Route path='/Login' element={<Login userId={userId} setUserId={setUserId} />} />
+                <Route path='/login' element={<Login userId={userId} setUserId={setUserId} />} />
                 <Route path='/toseter' element={<Toster />} />
-                <Route path='/Product/:id' element={<Product userId={userId} setUserId={setUserId} />} />
-                <Route path='/SingleProduct/:id' element={<SingleProduct userId={userId} setUserId={setUserId} />} />
+                <Route path='/product/:id' element={<Product userId={userId} setUserId={setUserId} />} />
+                <Route path='/singleproduct/:id' element={<SingleProduct userId={userId} setUserId={setUserId} />} />
                 <Route path='/addtocart' element={<Addtocart userId={userId} setUserId={setUserId} />} />
                 <Route path='/shop' element={<Shop userId={userId} setUserId={setUserId} />} />
                 <Route path='/orders' element={<OrderDetails userId={userId} setUserId={setUserId} />} />
-                <Route path='/paymentInput' element={<PaymentInputs />} />
-        
+                <Route path='/paymentinput' element={<PaymentInputs />} />
+
                 {/* All Admin area routes */}
-                <Route path='/AdminProductView/:id' element={<ProductView />} setUserId={setUserId} userId={userId}/>
-                <Route path='/AdminProductEdit/:id' element={<AdminProductEdit />} setUserId={setUserId} userId={userId}/>
-                <Route path='/AllCustomer' element={<AllCustomer />} setUserId={setUserId} userId={userId}/>
-                <Route path='/dash' element={<Dashboard />} setUserId={setUserId} userId={userId}/>
-                <Route path='/admin-login' element={<Adminlogin />} setUserId={setUserId} userId={userId}/>
-                <Route path='/addproduct' element={<Addproduct />} setUserId={setUserId} userId={userId}/>
-                <Route path='/AllProduct' element={<AllProduct />} setUserId={setUserId} userId={userId}/>
+                <Route path='/adminproductview/:id' element={<ProductView userId={userId} setUserId={setUserId} />} />
+                <Route path='/adminproductedit/:id' element={<AdminProductEdit userId={userId} setUserId={setUserId} />} />
+                <Route path='/allcustomer' element={<AllCustomer userId={userId} setUserId={setUserId} />} />
+                <Route path='/dash' element={<Dashboard userId={userId} setUserId={setUserId} />} />
+                <Route path='/admin-login' element={<Adminlogin userId={userId} setUserId={setUserId} />} />
+                <Route path='/addproduct' element={<Addproduct userId={userId} setUserId={setUserId} />} />
+                <Route path='/allproduct' element={<AllProduct userId={userId} setUserId={setUserId} />} />
             </Routes>
         </BrowserRouter>
     );
