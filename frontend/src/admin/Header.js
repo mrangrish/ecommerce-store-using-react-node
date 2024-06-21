@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {  BsPersonCircle, BsSearch, BsJustify } from 'react-icons/bs';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import { NavDropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { IoPersonCircle } from 'react-icons/io5';
 
 
 function Header({ OpenSidebar , adminId, adminName }) {
@@ -34,9 +34,10 @@ function Header({ OpenSidebar , adminId, adminName }) {
         {/* <BsFillBellFill className='icon' />
         <BsFillEnvelopeFill className='icon' />
        */}
-        <DropdownButton id="dropdown-basic-button" variant="light" title={<BsPersonCircle />}>
-          <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-        </DropdownButton>
+      
+      <NavDropdown title={<IoPersonCircle size={32} />} id="basic-nav-dropdown">
+                                <NavDropdown.Item onClick={handleLogout}><IoLogOut /> Logout</NavDropdown.Item>
+                            </NavDropdown>
 
       </div>
     </header>
