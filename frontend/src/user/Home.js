@@ -32,7 +32,7 @@ function Home({ userId, setUserId }) {
             <Header userId={userId} setUserId={setUserId} addtocartcount={addtocartcount} localStoragecount={localStoragecount} />
             <Slideshow />
             <Productcategories userId={userId} />
-            <Latest userId={userId} setUserId={setUserId} />
+            <Latest userId={userId} setUserId={setUserId} setAddtocartcount={setAddtocartcount} setLocalStoragecount={setLocalStoragecount}/>
             <Footer />
         </div>
     );
