@@ -29,7 +29,7 @@ function Header({ userId, setUserId, addtocartcount, localStoragecount }) {
                         <Nav.Link href='/shop'>Shop</Nav.Link>
                         <Nav.Link href="#contactus">Contact Us</Nav.Link>
                     </Nav>
-                    <Nav> 
+                    <Nav>
                         <Nav.Link href="#"><IoHeartOutline size={32} /></Nav.Link>
                         <div style={{ marginRight: '-3px' }}></div>
                         <Nav.Link href="/addtocart">
