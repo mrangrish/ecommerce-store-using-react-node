@@ -23,7 +23,7 @@ router.get('/Productbrand/:category_id', (req, res) => {
 router.get('/ProductColor/:category_id', (req, res) => {
     try {
         const categoryId = req.params.category_id;
-        const sql = `SELECT DISTINCT (color) FROM product WHERE category_id = ?`;
+        const sql = `SELECT DISTINCT color FROM product WHERE category_id = ?`;
         db.query(sql, [categoryId], (err, colors) => {
             if (err) {
                 console.error('Error Fetching Color:', err);
