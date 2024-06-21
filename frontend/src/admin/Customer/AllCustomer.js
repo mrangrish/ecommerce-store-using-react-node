@@ -9,7 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function AllCustomer() {
+export default function AllCustomer({userId, setUserId}) {
     const tableRef = useRef();
     const [tableData, setTableData] = useState([]);
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -68,9 +68,9 @@ export default function AllCustomer() {
     return (
         <div>
             <div className='grid-container'>
-            <Header toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                <main className='main-container'>
+            <Header toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId}/>
+            <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId} />
+            <main className='main-container-dash'>
                 <ToastContainer
                         position="top-right"
                         autoClose={5000}
