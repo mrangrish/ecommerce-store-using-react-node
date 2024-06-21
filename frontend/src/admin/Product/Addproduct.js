@@ -9,7 +9,7 @@ import Validation from './adminproductvalidation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function Addproduct() {
+function Addproduct({userId, setUserId}) {
     
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -17,10 +17,6 @@ function Addproduct() {
     const [subcategories, setSubcategories] = useState([]);
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [productImage, setproductimage] = useState([]);
-
-    const location = useLocation();
-    const adminId = location.state?.adminId;
-    const adminName = location.state?.adminName;
     
     const [values, setValues] = useState({
         product_name: '',
@@ -149,9 +145,9 @@ function Addproduct() {
     return (
         <div>
             <div className='grid-container'>
-            <Header toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                    <main className='main-container'>
+            <Header toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId}/>
+            <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId} />
+                    <main className='main-container-dash'>
                     <div className='main-title mb-4'>
                         <h3>PRODUCTS</h3>
                     </div>
