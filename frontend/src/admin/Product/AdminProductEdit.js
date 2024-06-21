@@ -29,10 +29,6 @@ function AdminProductEdit() {
         setOpenSidebarToggle(!openSidebarToggle);
     };
 
-    const location = useLocation();
-    const adminId = location.state?.adminId;
-    const adminName = location.state?.adminName;
-
     const getProductIdFromUrl = () => {
         const pathParts = window.location.pathname.split('/');
         return pathParts[pathParts.length - 1];
@@ -158,7 +154,7 @@ function AdminProductEdit() {
             <div className='grid-container'>
                 <Header toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
                 <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                <main className='main-container'>
+                <main className='main-container-dash'>
                 <ToastContainer
                         position="top-right"
                         autoClose={5000}
