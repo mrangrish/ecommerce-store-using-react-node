@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import './style.css';
 import axios from 'axios';
 
-function Dashboard() {
+function Dashboard({userId, setUserId}) {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [productCount, setProductCount] = useState(0);
   const [customerCount, setCustomerCount] = useState(0);
@@ -47,9 +47,9 @@ function Dashboard() {
 
   return (
     <div className='grid-container'>
-      <Header toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-      <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-      <main className='main-container'>
+      <Header toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId}/>
+      <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId} />
+      <main className='main-container-dash'>
         <div className='main-title'>
           <h3>DASHBOARD</h3>
         </div>
