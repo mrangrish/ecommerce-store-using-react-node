@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import '../Product/filter.css';
@@ -9,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function Latest({ userId }) {
+function Latest({ userId, setAddtocartcount, setLocalStoragecount }) {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
@@ -27,6 +26,7 @@ function Latest({ userId }) {
         };
         fetchData();
     }, []);
+
     const getImageUrl = (jsonString) => {
         try {
             const images = JSON.parse(jsonString);
@@ -43,12 +43,14 @@ function Latest({ userId }) {
             if (userId) {
                 await axios.post("http://localhost:8081/routeaddtocart/cart", { users_id: userId, product_id: productId });
                 toast.success('Product added to cart successfully!');
+                setAddtocartcount(prevCount => prevCount + 1); 
             } else {
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                 const created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 cartItems.push({ productId, quantity: 1, product_name, product_price, product_brand, product_image, product_offerPrice, created_at });
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
                 toast.success('Product added to cart successfully!');
+                setLocalStoragecount(prevCount => prevCount + 1); 
             }
         } catch (error) {
             console.error("Error adding item to cart:", error);
@@ -63,21 +65,21 @@ function Latest({ userId }) {
 
     return (
         <div className="r1">
-                <ToastContainer
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                />
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <h1 className="text-center mt-5 mb-5">Latest Products</h1>
             <div className="container mb-5">
-        
                 <div className="row">
-                {products.map((item, index) => (
+                    {products.map((item, index) => (
                         <div key={index} className="col-md-3 col-sm-6" data-aos="fade-up">
                             <div className="product-grid">
                                 <div className="product-image">
