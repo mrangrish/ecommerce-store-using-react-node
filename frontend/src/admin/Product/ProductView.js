@@ -51,7 +51,7 @@ function ProductView() {
             <div className='grid-container'>
                 <Header toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
                 <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                <main className='main-container'>
+                <main className='main-container-dash'>
                     <div className='main-title mb-4'><h3>View Product</h3></div>
                     {viewProduct && viewProduct.map((item) => (
                         <div>
