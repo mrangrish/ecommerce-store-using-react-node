@@ -54,7 +54,6 @@ app.use('/AddPaymentCart', PaymentCart);
 
 app.get('/session', (req, res) => {
     if (req.session.userId) {
-        // console.log(req.session.userId);
         return res.json({ userId: req.session.userId });
     } else {
         
