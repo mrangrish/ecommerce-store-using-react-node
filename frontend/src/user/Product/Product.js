@@ -3,21 +3,20 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import './filter.css';
 import { IoCart, IoHeartOutline } from "react-icons/io5";
-
 import AOS from "aos";
 import 'aos/dist/aos.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from "../Header/header";
+import Footer from "../footer/footer";
 
 function Product({ userId, setUserId }) {
     const location = useLocation();
     const id = location.state && location.state.id;
     const [products, setProducts] = useState([]);
     const [subcategories, setSubcategories] = useState([]);
-    const [color, setcolor] = useState([]);
-    const [brand, setbrand] = useState([]);
-
+    const [color, setColor] = useState([]);
+    const [brand, setBrand] = useState([]);
     const [addtocartcount, setAddtocartcount] = useState(0);
     const [localStoragecount, setLocalStoragecount] = useState(0);
 
@@ -50,15 +49,15 @@ function Product({ userId, setUserId }) {
     }, []);
 
     useEffect(() => {
-        const fetchbrand = async () => {
+        const fetchBrand = async () => {
             try {
                 const response = await axios.get(`http://localhost:8081/product/Productbrand/${categoryId}`);
-                setbrand(response.data);
+                setBrand(response.data);
             } catch (error) {
                 console.error('Error fetching Brand:', error);
             }
         };
-        fetchbrand();
+        fetchBrand();
     }, [categoryId]);
 
     useEffect(() => {
@@ -93,15 +92,15 @@ function Product({ userId, setUserId }) {
     };
 
     useEffect(() => {
-        const fetchcolor = async () => {
+        const fetchColor = async () => {
             try {
                 const response = await axios.get(`http://localhost:8081/product/ProductColor/${categoryId}`);
-                setcolor(response.data);
+                setColor(response.data);
             } catch (error) {
                 console.error('Error fetching color:', error);
             }
         };
-        fetchcolor();
+        fetchColor();
     }, [categoryId]);
 
     useEffect(() => {
@@ -137,14 +136,14 @@ function Product({ userId, setUserId }) {
         try {
             if (userId) {
                 await axios.post("http://localhost:8081/routeaddtocart/cart", { users_id: userId, product_id: productId });
-                setAddtocartcount(prevCount => prevCount + 1); 
+                setAddtocartcount(prevCount => prevCount + 1);
                 toast.success('Product added to cart successfully!');
             } else {
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                 const created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 cartItems.push({ productId, quantity: 1, product_name, product_price, product_brand, product_image, product_offerPrice, created_at });
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                setLocalStoragecount(prevCount => prevCount + 1); 
+                setLocalStoragecount(prevCount => prevCount + 1);
                 toast.success('Product added to cart successfully!');
             }
         } catch (error) {
@@ -152,12 +151,10 @@ function Product({ userId, setUserId }) {
             toast.error('Failed to add product to cart!');
         }
     };
-    
-
 
     return (
         <div>
-            <Header userId={userId} setUserId={setUserId} addtocartcount={addtocartcount} localStoragecount={localStoragecount}/>
+            <Header userId={userId} setUserId={setUserId} addtocartcount={addtocartcount} localStoragecount={localStoragecount} />
             <div className="container mt-5">
                 <ToastContainer
                     position="top-right"
@@ -177,8 +174,8 @@ function Product({ userId, setUserId }) {
                             <div className="heading d-flex justify-content-between align-items-center">
                                 <h6 className="text-uppercase">Subcategories</h6>
                             </div>
-                            {subcategories.map((item, index) => (
-                                <div className="d-flex justify-content-between mt-2" key={index}>
+                            {subcategories.map((item) => (
+                                <div className="d-flex justify-content-between mt-2" key={item.id}>
                                     <div className="form-check">
                                         <input className="form-check-input" type="checkbox" value={item.id} onChange={e => handleFilterChange('subcategories', item.id, e.target.checked)} />
                                         <label className="form-check-label" htmlFor={`flexCheckDefault${item.id}`}>{item.subcategories_name}</label>
@@ -190,6 +187,7 @@ function Product({ userId, setUserId }) {
                             <div className="heading d-flex justify-content-between align-items-center">
                                 <h6 className="text-uppercase">Product_color</h6>
                             </div>
+
                             {color.map((item, index) => (
                                 <div className="d-flex justify-content-between mt-2" key={index}>
                                     <div className="form-check">
@@ -198,6 +196,8 @@ function Product({ userId, setUserId }) {
                                     </div>
                                 </div>
                             ))}
+
+
                         </div>
 
                         <div className="type p-2">
@@ -207,7 +207,9 @@ function Product({ userId, setUserId }) {
                             {brand.map((item) => (
                                 <div className="d-flex justify-content-between mt-2" key={item.id}>
                                     <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" value={item.product_brand} onChange={e => handleFilterChange('brands', item.product_brand, e.target.checked)} />
+                                        <input className="form-check-input" type="checkbox" value={item.product_brand
+
+                                        } onChange={e => handleFilterChange('brands', item.product_brand, e.target.checked)} />
                                         <label className="form-check-label" htmlFor={`flexCheckDefaultBrand${item.id}`}>{item.product_brand}</label>
                                     </div>
                                 </div>
@@ -217,8 +219,8 @@ function Product({ userId, setUserId }) {
 
                     <div className="col-md-9">
                         <div className="row">
-                            {products.map((item, index) => (
-                                <div key={index} className="col-md-3 col-sm-6" data-aos="fade-up">
+                            {products.map((item) => (
+                                <div key={item.id} className="col-md-3 col-sm-6" data-aos="fade-up">
                                     <div className="product-grid">
                                         <div className="product-image">
                                             <Link to={`/SingleProduct/${item.id}`} className="image">
@@ -260,6 +262,7 @@ function Product({ userId, setUserId }) {
                     </div>
                 </div>
             </div>
+        <Footer />
         </div>
     );
 }
