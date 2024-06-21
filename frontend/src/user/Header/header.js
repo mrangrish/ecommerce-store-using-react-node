@@ -7,11 +7,11 @@ import { useNavigate } from 'react-router-dom';
 function Header({ userId, setUserId, addtocartcount, localStoragecount }) {
     const navigate = useNavigate();
     const handleLogout = () => {
-        axios.get('http://localhost:8081/userAuth/Userlogout', { withCredentials: true })
+        axios.get('http://localhost:8081/adminAuthRouter/adminlogout', { withCredentials: true })
             .then(response => {
                 console.log(response.data.message);
                 setUserId(null);
-                navigate('/');
+                navigate('/admin-login');
             })
             .catch(error => {
                 console.error(error);
