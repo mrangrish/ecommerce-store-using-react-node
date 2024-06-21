@@ -44,7 +44,6 @@ function PaymentInput({ userId }) {
             )}
             <label htmlFor="cardnumber">Card Number</label>
             <div className="card-input-wrapper">
-              <svg {...getCardImageProps({ images })} />
               <input
                 {...getCardNumberProps({ onChange: handleChangeCardNumber })}
                 value={cardNumber}
