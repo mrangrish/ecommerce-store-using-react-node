@@ -6,7 +6,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function AdminProductEdit() {
+function AdminProductEdit({userId, setUserId}) {
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
     const [editProduct, setEditProduct] = useState({});
     const [categories, setCategories] = useState([]);
@@ -147,14 +147,12 @@ function AdminProductEdit() {
 
         }
     };
-    
-    
     return (
         <>
             <div className='grid-container'>
-                <Header toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} adminId={adminId} adminName={adminName} />
-                <main className='main-container-dash'>
+            <Header toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId}/>
+            <SideNavbar openSidebarToggle={openSidebarToggle} toggleSidebar={toggleSidebar} userId={userId} setUserId={setUserId} />
+            <main className='main-container-dash'>
                 <ToastContainer
                         position="top-right"
                         autoClose={5000}
@@ -215,8 +213,6 @@ function AdminProductEdit() {
                                     ))}
                                 </select>
                             </div>
-
-
                         </div>
                         <div className="row mb-3">
                             <div className="col">
