@@ -303,6 +303,18 @@ function AuthUserOrder({ userId, setUserId }) {
         }
     }
 
+    useEffect(() => {
+        const FetchPaymentdetails = async () => {
+            try {
+            const response = await axios.get(`http://localhost:8081/AddPaymentCart/paymentcart/${userSessionid}`);
+            console.log(response.data.paymentCards.length);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        FetchPaymentdetails();
+    },  [userSessionid]);
+
     return (
         <div className="container-fluid mt-5">
             <div className="row justify-content-center">
@@ -456,7 +468,7 @@ function AuthUserOrder({ userId, setUserId }) {
 
                                             }
                                             {!openPayment ?
-                                                <>
+                                                 <>
                                                     <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
                                                         <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Payment Details</p>
                                                     </div>
@@ -474,7 +486,6 @@ function AuthUserOrder({ userId, setUserId }) {
                                                     </p>
                                                 </div>
                                             }
-
                                         </>
                                     )}
                                 </>
