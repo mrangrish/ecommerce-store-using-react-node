@@ -83,15 +83,15 @@ function AuthUserOrder({ userId, setUserId }) {
         }
     }, [userId]);
 
-    
-        const userSessionid = sessionStorage.getItem('userId');
 
-            if (userSessionid === "null") { 
-                $('#checkuserid').css('display', 'block');
-            } else {
-                $('#checkuserid').css('display', 'none');
-            }
-    
+    const userSessionid = sessionStorage.getItem('userId');
+
+    if (userSessionid === "null") {
+        $('#checkuserid').css('display', 'block');
+    } else {
+        $('#checkuserid').css('display', 'none');
+    }
+
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -313,7 +313,7 @@ function AuthUserOrder({ userId, setUserId }) {
                     <div className="col-md-7">
                         {checkUserId.length === 0 ? (
                             <div id="checkuserid">
-                                <div  style={{ margin: "0 0", color: "white", background: "lightseagreen"}} className="shadow rounded p-3">
+                                <div style={{ margin: "0 0", color: "white", background: "lightseagreen" }} className="shadow rounded p-3">
                                     <p style={{ fontSize: "large", fontWeight: "500", position: "relative", margin: "0" }}>Login/Signup</p>
                                 </div>
                                 {!otpVerified ? (
