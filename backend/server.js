@@ -17,6 +17,8 @@ const userShop = require('./route/userShop/userShop.js');
 const OrderDetails = require('./route/OrderDetails/orderdetails.js');
 const mailVerified = require('./route/OrderDetails/OrderMailverification/mailVerified.js');
 const PaymentCart = require('./route/OrderDetails/PaymentCart.js');
+const Categories = require('./route/Categories/Categories.js');
+
 const app = express();
 
 const corsOptions = {
@@ -51,6 +53,7 @@ app.use('/userShop', userShop);
 app.use('/orderdetails', OrderDetails);
 app.use('/mailverified', mailVerified);
 app.use('/AddPaymentCart', PaymentCart);
+app.use('/productCategories', Categories);
 
 app.get('/session', (req, res) => {
     if (req.session.userId) {
