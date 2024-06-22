@@ -16,10 +16,6 @@ function Dashboard({userId, setUserId}) {
     setOpenSidebarToggle(!openSidebarToggle);
   };
 
-  const location = useLocation();
-  const adminId = location.state?.adminId;
-  const adminName = location.state?.adminName;
-
   const data = [
     { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
     { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
@@ -57,31 +53,31 @@ function Dashboard({userId, setUserId}) {
         <div className='main-cards'>
           <div className='card-dash'>
             <div className='card-inner'>
-              <h3 className='card-title-name'>PRODUCTS</h3>
+              <h4 className='card-title-name'>Product</h4>
               <BsFillArchiveFill className='card_icon' />
             </div>
-            <h1>{productCount}</h1>
+            <h2 style={{fontSize: "42px"}}>{productCount}</h2>
           </div>
           <div className='card-dash'>
             <div className='card-inner'>
-              <h3 className='card-title-name'>ORDERS</h3>
+              <h4 className='card-title-name'>Orders</h4>
               <BsFillGrid3X3GapFill className='card_icon' />
             </div>
-            <h1>12</h1>
+            <h2 style={{fontSize: "42px"}}>12</h2>
           </div>
           <div className='card-dash'>
             <div className='card-inner'>
-              <h3 className='card-title-name'>CUSTOMERS</h3>
+              <h4 className='card-title-name'>Customer</h4>
               <BsPeopleFill className='card_icon' />
             </div>
-            <h1>{customerCount}</h1>
+            <h2 style={{fontSize: "42px"}}>{customerCount}</h2>
           </div>
           <div className='card-dash'>
             <div className='card-inner'>
-              <h3 className='card-title-name'>ADD TO CART</h3>
+              <h4 className='card-title-name'>Add to cart</h4>
               <BsCart className='card_icon' />
             </div>
-            <h1>42</h1>
+            <h2 style={{fontSize: "42px"}}>42</h2>
           </div>
         </div>
         <div className='charts'>
