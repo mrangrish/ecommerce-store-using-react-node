@@ -6,13 +6,14 @@ import $ from 'jquery';
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
 import { Modal, Button } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 
 function Categories({ userId, setUserId }) {
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [subcategories, setSubcategories] = useState([]);
-
+    const [openCategoriesModal, setopenCategoriesModal] = useState(false);
     const tableRef = useRef();
     const [tableData, setTableData] = useState([]);
 
@@ -35,7 +36,7 @@ function Categories({ userId, setUserId }) {
                 `<button class="btn btn-primary subcategories-btn" data-id="${product.id}">Subcategories</button>`
             ]);
             setTableData(formattedData);
-    
+
         } catch (error) {
             console.error('Error fetching categories:', error.message);
         }
@@ -46,9 +47,9 @@ function Categories({ userId, setUserId }) {
             data: tableData,
             columns: [
                 { title: "Categories Name" },
-                { 
-                    title: "Categories Image", 
-                    render: function(data, type, row) {
+                {
+                    title: "Categories Image",
+                    render: function (data, type, row) {
                         return data;
                     }
                 },
@@ -57,7 +58,7 @@ function Categories({ userId, setUserId }) {
             destroy: true
         });
 
-        $(tableRef.current).on('click', '.subcategories-btn', function() {
+        $(tableRef.current).on('click', '.subcategories-btn', function () {
             const categoryId = $(this).data('id');
             handleSubcategoriesClick(categoryId);
         });
@@ -86,6 +87,13 @@ function Categories({ userId, setUserId }) {
         setShowModal(false);
     };
 
+    const handleCatgories = () => {
+        setopenCategoriesModal(true);
+    }
+    const handleCloseCategories = () => {
+
+        setopenCategoriesModal(false);
+    }
     return (
         <>
             <div className='grid-container'>
@@ -94,10 +102,35 @@ function Categories({ userId, setUserId }) {
                 <main className='main-container-dash'>
                     <div className='main-title mb-4'>
                         <h3>Categories</h3>
+                        <button className="btn btn-primary" onClick={handleCatgories}>Add Categories</button>
                     </div>
                     <table className="display" width="100%" ref={tableRef}></table>
                 </main>
             </div>
+
+            <Modal show={openCategoriesModal} onHide={handleCloseCategories}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Categories</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group mb-3">
+                    <label>Categories Name*</label>
+                        <input type="text" className="form-control" name="categories_name" />
+                    </div>
+                    <div className="form-group">
+                    <label>Categories Image*</label>
+                        <input type="file" className="form-control" name="categories_image" />
+                    </div>
+                    <div className="form-group mt-3">
+                        <button className="btn btn-primary">submit</button>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseCategories}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
