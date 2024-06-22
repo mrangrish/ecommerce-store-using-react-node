@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
@@ -20,6 +19,7 @@ import Login from './user/Login/Login';
 import OrderDetails from './user/orders/orderdetails';
 import PaymentInputs from './user/orders/PaymentInputs';
 import Categories from './admin/Categories/Categories';
+import SubCategories from './admin/Categories/subCategories';
 
 function App() {
     const [userId, setUserId] = useState(null);
@@ -63,6 +63,7 @@ function App() {
                 <Route path='/addproduct' element={<Addproduct userId={userId} setUserId={setUserId} />} />
                 <Route path='/allproduct' element={<AllProduct userId={userId} setUserId={setUserId} />} />
                 <Route path='/Categories' element={<Categories  userId={userId} setUserId={setUserId} />} />
+                <Route path='/subCategories/:id' element={<SubCategories userId={userId} setUserId={setUserId} />} />
             </Routes>
         </BrowserRouter>
     );

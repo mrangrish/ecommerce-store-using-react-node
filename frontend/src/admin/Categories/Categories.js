@@ -6,37 +6,39 @@ import $ from 'jquery';
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
 import { Modal, Button } from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 function Categories({ userId, setUserId }) {
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [subcategories, setSubcategories] = useState([]);
-    const [openCategoriesModal, setopenCategoriesModal] = useState(false);
+    const [openCategoriesModal, setOpenCategoriesModal] = useState(false);
     const tableRef = useRef();
     const [tableData, setTableData] = useState([]);
+    const [categoriesImage, setCategoriesImage] = useState(null);
+    const [values, setValues] = useState({
+        categories_name: ''
+    });
 
     const toggleSidebar = () => {
         setOpenSidebarToggle(!openSidebarToggle);
     };
 
     useEffect(() => {
-        fetchcategories();
+        fetchCategories();
     }, []);
 
-    const fetchcategories = async () => {
+    const fetchCategories = async () => {
         try {
             const response = await axios.get('http://localhost:8081/categories');
             const productData = response.data;
-            console.log(response.data);
             const formattedData = productData.map(product => [
                 product.categories_name,
                 `<img src="http://localhost:8081/images/${product.categories_image}" alt="${product.categories_name}" style="width: 70px; height: 50px;"/>`,
-                `<button class="btn btn-primary subcategories-btn" data-id="${product.id}">Subcategories</button>`
+                `<a href="/Subcategories/${product.id}" class="btn btn-primary" >Subcategories</a>`
             ]);
             setTableData(formattedData);
-
         } catch (error) {
             console.error('Error fetching categories:', error.message);
         }
@@ -47,9 +49,8 @@ function Categories({ userId, setUserId }) {
             data: tableData,
             columns: [
                 { title: "Categories Name" },
-                {
-                    title: "Categories Image",
-                    render: function (data, type, row) {
+                { title: "Categories Image",
+                    render: function (data) {
                         return data;
                     }
                 },
@@ -83,17 +84,49 @@ function Categories({ userId, setUserId }) {
         }
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
+    const handleOpenCategoriesModal = () => {
+        setOpenCategoriesModal(true);
     };
 
-    const handleCatgories = () => {
-        setopenCategoriesModal(true);
-    }
-    const handleCloseCategories = () => {
+    const handleCloseCategoriesModal = () => {
+        setOpenCategoriesModal(false);
+    };
 
-        setopenCategoriesModal(false);
-    }
+    const handleInput = (event) => {
+        setValues(prev => ({
+            ...prev,
+            [event.target.name]: event.target.value
+        }));
+    };
+
+    const handleImage = (event) => {
+        setCategoriesImage(event.target.files[0]); 
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const formData = new FormData();
+            formData.append('categories_name', values.categories_name);
+            formData.append('categories_image', categoriesImage); 
+
+            const response = await axios.post('http://localhost:8081/productCategories/addNewCategories', formData);
+            console.log(response.data);
+
+            setValues({
+                categories_name: '',
+            });
+            setCategoriesImage(null);
+
+            toast.success('Category added successfully!');
+            setOpenCategoriesModal(false);
+            fetchCategories();
+        } catch (error) {
+            toast.error('Failed to add category!');
+            console.error('Error adding category:', error);
+        }
+    };
+
     return (
         <>
             <div className='grid-container'>
@@ -102,57 +135,38 @@ function Categories({ userId, setUserId }) {
                 <main className='main-container-dash'>
                     <div className='main-title mb-4'>
                         <h3>Categories</h3>
-                        <button className="btn btn-primary" onClick={handleCatgories}>Add Categories</button>
+                        <button className="btn btn-primary" onClick={handleOpenCategoriesModal}>Add Categories</button>
                     </div>
                     <table className="display" width="100%" ref={tableRef}></table>
                 </main>
             </div>
 
-            <Modal show={openCategoriesModal} onHide={handleCloseCategories}>
+            <Modal show={openCategoriesModal} onHide={handleCloseCategoriesModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Categories</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="form-group mb-3">
-                    <label>Categories Name*</label>
-                        <input type="text" className="form-control" name="categories_name" />
-                    </div>
-                    <div className="form-group">
-                    <label>Categories Image*</label>
-                        <input type="file" className="form-control" name="categories_image" />
-                    </div>
-                    <div className="form-group mt-3">
-                        <button className="btn btn-primary">submit</button>
-                    </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group mb-3">
+                            <label>Categories Name*</label>
+                            <input type="text" className="form-control" name="categories_name" value={values.categories_name} onChange={handleInput} required />
+                        </div>
+                        <div className="form-group">
+                            <label>Categories Image*</label>
+                            <input type="file" className="form-control" name="categories_image" onChange={handleImage} required />
+                        </div>
+                        <div className="form-group mt-3">
+                            <button type="submit" className="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseCategories}>
+                <Button variant="secondary" onClick={handleCloseCategoriesModal}>
                         Close
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Subcategories</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {subcategories.length > 0 ? (
-                        <ul>
-                            {subcategories.map(subcategory => (
-                                <li key={subcategory.id}>{subcategory.subcategories_name}</li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No subcategories available.</p>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
         </>
     );
 }
