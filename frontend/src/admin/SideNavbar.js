@@ -38,8 +38,8 @@ function SideNavbar({ openSidebarToggle, OpenSidebar }) {
                     </Link>
                 </li>
                 <li 
-                  className={`sidebar-list-item ${activeLink === '/categories' ? 'active' : ''}`} 
-                  onClick={() => handleLinkClick('/categories')}
+                  className={`sidebar-list-item ${activeLink === '/Categories' ? 'active' : ''}`} 
+                  onClick={() => handleLinkClick('/Categories')}
                 >
                     <Link to="/Categories">
                         <BsFillGrid3X3GapFill className='icon' /> Categories
@@ -49,7 +49,7 @@ function SideNavbar({ openSidebarToggle, OpenSidebar }) {
                   className={`sidebar-list-item ${activeLink === '/AllCustomer' ? 'active' : ''}`} 
                   onClick={() => handleLinkClick('/AllCustomer')}
                 >
-                    <Link to="/AllCustomer">
+                    <Link to="/AllCustomer">    
                         <BsPeopleFill className='icon' /> Customers
                     </Link>
                 </li>
