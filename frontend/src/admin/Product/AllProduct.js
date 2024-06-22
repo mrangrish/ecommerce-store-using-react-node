@@ -7,21 +7,19 @@ import Header from "../Header";
 import SideNavbar from "../SideNavbar";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link,} from "react-router-dom";
 
 export default function AllProduct({ userId, setUserId }) {
     const tableRef = useRef();
     const [tableData, setTableData] = useState([]);
+
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
-    const navigate = useNavigate();
+    
 
     const toggleSidebar = () => {
         setOpenSidebarToggle(!openSidebarToggle);
     };
 
-    const location = useLocation();
-    const adminId = location.state?.adminId;
-    const adminName = location.state?.adminName;
 
     const fetchData = async () => {
         try {
