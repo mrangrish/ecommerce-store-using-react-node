@@ -20,7 +20,7 @@ const upload = multer({ storage });
 router.post('/addNewCategories', upload.single('categories_image'), (req, res) => {
     try {
         const { categories_name } = req.body;
-        const categories_image = req.file.filename; // Get the filename from the uploaded file
+        const categories_image = req.file.filename;
         const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         const sql = `INSERT INTO categories (categories_name, categories_image, created_at) VALUES (?, ?, ?)`;
@@ -36,5 +36,25 @@ router.post('/addNewCategories', upload.single('categories_image'), (req, res) =
         res.status(500).json({ message: 'Failed to add category', error: error.message });
     }
 });
+
+router.post('/addNewSubcategories/:id', (req, res) => {
+    try{ 
+        const categoryId = req.params.id;
+        const subcategories_name = req.body.subcategories_name;
+        const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        const sql = `INSERT INTO subcategories (categories_id, subcategories_name, created_at) VALUES (?, ?, ?)`;
+        db.query(sql, [categoryId, subcategories_name, currentDateTime], (err, result) => {
+            if(err) {
+                return res.status(500).json({ message: 'Failed to add subcategory', error: err.message });
+            }
+           res.status(200).json({message: 'Subcategory added successfully!'});
+        })
+
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to add category', error: error.message });
+    }
+
+})
 
 module.exports = router;
