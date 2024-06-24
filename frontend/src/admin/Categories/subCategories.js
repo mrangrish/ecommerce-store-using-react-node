@@ -32,7 +32,6 @@ function SubCategories({ userId, setUserId }) {
         if (!err.subcategories_name) {
             axios.post(`http://localhost:8081/productCategories/addNewSubcategories/${product_id}`, values)
                 .then(res => {
-                    console.log(res);
                     setValues({ subcategories_name: '' });
                     toast.success('Category added successfully!');
                     setOpenCategoriesModal(false);
@@ -46,7 +45,6 @@ function SubCategories({ userId, setUserId }) {
         event.preventDefault();
         axios.put(`http://localhost:8081/productCategories/updateSubcategories/${editValues.id}`, editValues)
             .then(res => {
-                console.log(res);
                 toast.success('Category updated successfully!');
                 setOpenEditModal(false);
                 fetchCategories();
@@ -175,7 +173,7 @@ function SubCategories({ userId, setUserId }) {
                 </Modal.Footer>
             </Modal>
         </>
-    )
+    );
 }
 
 export default SubCategories;
