@@ -181,52 +181,52 @@ router.put('/updateProduct/:product_id', upload.array('product_image'), (req, re
             var sql = `UPDATE product SET product_name = ?, product_description = ?, product_stock = ?, product_price = ?, product_brand = ?, product_image = ?, category_id = ?, subcategory_id = ?, color = ?, product_offerPrice = ? WHERE id = ?`;
 
             db.query(sql, [
-                    product_name,
-                    product_description,
-                    product_stock,
-                    product_price,
-                    product_brand,
-                    imagesJSON,
-                    category_id,
-                    subcategory_id,
-                    color,
-                    product_offerPrice,
-                    req.params.product_id
-                ], (err, result) => {
-                    if (err) {
-                        console.error('Error updating product:', err);
-                        return res.status(500).json({ error: 'Failed to update product' });
-                    }
-                    res.status(200).json({ message: 'Product updated successfully' });
-                })
+                product_name,
+                product_description,
+                product_stock,
+                product_price,
+                product_brand,
+                imagesJSON,
+                category_id,
+                subcategory_id,
+                color,
+                product_offerPrice,
+                req.params.product_id
+            ], (err, result) => {
+                if (err) {
+                    console.error('Error updating product:', err);
+                    return res.status(500).json({ error: 'Failed to update product' });
+                }
+                res.status(200).json({ message: 'Product updated successfully' });
+            })
         } else {
             // console.log('no');
             var sql = `UPDATE product SET product_name = ?, product_description = ?, product_stock = ?, product_price = ?, product_brand = ?,  category_id = ?, subcategory_id = ?, color = ?, product_offerPrice = ? WHERE id = ?`;
 
             db.query(sql, [
-                    product_name,
-                    product_description,
-                    product_stock,
-                    product_price,
-                    product_brand,
-                    imagesJSON,
-                    category_id,
-                    subcategory_id,
-                    color,
-                    product_offerPrice,
-                    req.params.product_id
-                ], (err, result) => {
-                    if (err) {
-                        console.error('Error updating product:', err);
-                        return res.status(500).json({ error: 'Failed to update product' });
-                    }
-                    res.status(200).json({ message: 'Product updated successfully' });
+                product_name,
+                product_description,
+                product_stock,
+                product_price,
+                product_brand,
+                imagesJSON,
+                category_id,
+                subcategory_id,
+                color,
+                product_offerPrice,
+                req.params.product_id
+            ], (err, result) => {
+                if (err) {
+                    console.error('Error updating product:', err);
+                    return res.status(500).json({ error: 'Failed to update product' });
+                }
+                res.status(200).json({ message: 'Product updated successfully' });
 
-                });
+            });
 
         }
 
-    // console.log(req.files);
+        // console.log(req.files);
         // const sql = `UPDATE product SET product_name = ?, product_description = ?, product_stock = ?, product_price = ?, product_brand = ?, product_image = ?, category_id = ?, subcategory_id = ?, color = ?, product_offerPrice = ? WHERE id = ?`;
 
         // db.query(sql, [
