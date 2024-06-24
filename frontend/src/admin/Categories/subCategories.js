@@ -2,14 +2,48 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "../Header";
 import SideNavbar from "../SideNavbar";
 import axios from "axios";
-import $ from "jquery";
+import $, { error, event } from "jquery";
 import { Button, Modal } from "react-bootstrap";
+import { toast } from "react-toastify";
+import Validation from "./Validation";
+
 
 function SubCategories({ userId, setUserId }) {
     const tableRef = useRef();
     const [tableData, setTableData] = useState([]);
     const [openCategoriesModal, setOpenCategoriesModal] = useState(false);
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [values, setValues] = useState({
+        subcategories_name: '',
+    })
+    const handleInput = (event) => {
+        setValues(prev => ({ ...prev, [event.target.name]: [event.target.value] }))
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const err = Validation(values);
+        setErrors(err);
+        if (errors.subcategories_name === "") {
+            axios.post(`http://localhost:8081/productCategories/addNewSubcategories/${product_id}`, values)
+                .then(
+                    res =>
+                        console.log(res),
+                    setValues({
+                        categories_name: '',
+                    }),
+
+
+                    toast.success('Category added successfully!'),
+                    setOpenCategoriesModal(false),
+                    fetchCategories()
+                )
+                .catch(err => console.log(err));
+        }
+
+    }
+
     const getCategoryFromUrl = () => {
         const pathParts = window.location.pathname.split('/');
         return pathParts[pathParts.length - 1];
@@ -31,7 +65,6 @@ function SubCategories({ userId, setUserId }) {
             const productData = response.data;
             const formattedData = productData.map(product => [
                 product.subcategories_name,
-
             ]);
             setTableData(formattedData);
         } catch (error) {
@@ -75,10 +108,11 @@ function SubCategories({ userId, setUserId }) {
                     <Modal.Title>Subcategories</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="form-group mb-3">
                             <label>SubCategories</label>
-                            <input type="text" className="form-control" />
+                            <input type="text" className="form-control" name="subcategories_name" onChange={handleInput} />
+                            {errors.subcategories_name && <span className='text-danger'> {errors.subcategories_name}</span>}
                         </div>
                         <div className="form-group">
                             <button className="btn btn-primary">Submit</button>
