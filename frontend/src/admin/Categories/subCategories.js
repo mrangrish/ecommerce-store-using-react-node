@@ -49,7 +49,7 @@ function SubCategories({ userId, setUserId }) {
         return pathParts[pathParts.length - 1];
     };
     const product_id = getCategoryFromUrl();
-    console.log(product_id);
+    // console.log(product_id);
 
     const toggleSidebar = () => {
         setOpenSidebarToggle(!openSidebarToggle);
