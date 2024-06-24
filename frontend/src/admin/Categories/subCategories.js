@@ -65,18 +65,25 @@ function SubCategories({ userId, setUserId }) {
             const productData = response.data;
             const formattedData = productData.map(product => [
                 product.subcategories_name,
+                `<button class="edit-btn btn btn-success" data-id="${product.id}">Edit</button>`
             ]);
             setTableData(formattedData);
         } catch (error) {
             console.error('Error fetching categories:', error.message);
         }
     };
+
+    $(tableRef.current).on('click', '.edit-btn', function () {
+        const productId = $(this).data('id');
+        
+    });
+
     useEffect(() => {
         const table = $(tableRef.current).DataTable({
             data: tableData,
             columns: [
                 { title: "Subcatgories Name" },
-
+                { title: "Action" }
             ],
             destroy: true
         });
@@ -100,6 +107,7 @@ function SubCategories({ userId, setUserId }) {
                         <h3>SubCategories</h3>
                         <button className="btn btn-primary" onClick={handleOpenCategoriesModal}>Add Categories</button>
                     </div>
+                    <a href="/Categories" className="btn btn-primary">Back to categories</a>
                     <table className="display" width="100%" ref={tableRef}></table>
                 </main>
             </div>
@@ -123,6 +131,26 @@ function SubCategories({ userId, setUserId }) {
                     <Button variant="secondary" onClick={handleCloseCategoriesModal}>
                         Close
                     </Button>
+                </Modal.Footer>
+            </Modal>
+
+
+
+            <Modal>
+                <Modal.Header>
+                    <Modal.Title>Edit SubCategories</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group mb-3">
+                        <label>Edit Subcategories</label>
+                        <input type="text" className="form-control" name="subcategories_name" />
+                    </div>
+                    <div className="form-group">
+                        <button className="btn btn-primary">Submit</button>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary">Close</Button>
                 </Modal.Footer>
             </Modal>
         </>
