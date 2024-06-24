@@ -57,4 +57,37 @@ router.post('/addNewSubcategories/:id', (req, res) => {
 
 })
 
+
+router.put('/updateSubcategories/:id', (req, res) => {
+    // try {
+    //   const id = req.params.id;
+    //   const subcategories_name = req.body.subcategories_name;
+        
+    //   const sql = `UPDATE subcategories SET  subcategories_name = ? WHERE id = ?`;
+    //   db.query(sql, [subcategories_name, id], (err, result) => {
+    //     if(err) {
+    //         return res.status(500).json({ message: 'Failed to update Subcategories', error: err.message });
+    //     }
+    //     res.status(200).json({message: 'Update Subcategories Successfully!'});
+    //   });
+
+    // } catch (error) {
+    //     res.status(500).json({message: 'Failed to update Subcategories', error: error.message});
+    // }
+    try {
+        const id = req.params.id;
+        const subcategories_name = req.body.subcategories_name; 
+        const sql = "UPDATE subcategories SET subcategories_name = ?  WHERE id = ? ";
+        db.query(sql, [id, subcategories_name], (err, result) => {
+            if(err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+            res.status(200).json(result);
+        });
+    } catch (error) {
+       res.status(500).send(error);
+    }
+})
+
 module.exports = router;
