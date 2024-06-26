@@ -70,4 +70,13 @@ router.put('/updateSubcategories/:id', (req, res) => {
     }
 });
 
+router.put('/updatecategories/:id', (req,res) => {
+    try {
+        const id = req.params.id;
+        console.log(req.body);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update subcategory', error: error.message });
+    } 
+})
+
 module.exports = router;
