@@ -34,7 +34,7 @@ function Categories({ userId, setUserId }) {
 
     const handleEditSubmit = (event) => {
         event.preventDefault();
-        axios.put(`http://localhost:8081/productCategories/updateSubcategories/${editValues.id}`, editValues)
+        axios.put(`http://localhost:8081/productCategories/updatecategories/${editValues.id}`, editValues)
             .then(res => {
                 toast.success('Category updated successfully!');
                 setOpenEditModal(false);
@@ -42,8 +42,6 @@ function Categories({ userId, setUserId }) {
             })
             .catch(err => console.log(err));
     };
-
-
 
     const toggleSidebar = () => {
         setOpenSidebarToggle(!openSidebarToggle);
@@ -57,12 +55,14 @@ function Categories({ userId, setUserId }) {
         try {
             const response = await axios.get('http://localhost:8081/categories');
             const productData = response.data;
+            console.log(productData);
 
             const formattedData = productData.map(product => [
-            
+
                 product.categories_name,
                 `<img src="http://localhost:8081/images/${product.categories_image}" alt="${product.categories_name}" style="width: 70px; height: 50px;"/>`,
                 `<a href="/Subcategories/${product.id}" class="btn btn-primary" >Subcategories</a>`,
+                product.Status === 1 ? "<button class='btn btn-warning'>Active</button>" : "<button class='btn btn-secondary'>DeActive</button>",
                 `<button class="edit-btn btn btn-success" data-id="${product.id}" data-name="${product.categories_name}" data-image="${product.categories_image}">Edit</button>`
             ]);
             setTableData(formattedData);
@@ -83,6 +83,7 @@ function Categories({ userId, setUserId }) {
                     }
                 },
                 { title: "Subcategories" },
+                { title: "Status" },
                 { title: "Action" }
             ],
             destroy: true
@@ -90,7 +91,7 @@ function Categories({ userId, setUserId }) {
 
         $(tableRef.current).on('click', '.subcategories-btn', function () {
             const categoryId = $(this).data('id');
-            handleSubcategoriesClick(categoryId);
+
         });
 
         return () => {
@@ -98,20 +99,7 @@ function Categories({ userId, setUserId }) {
         };
     }, [tableData]);
 
-    const handleSubcategoriesClick = (categoryId) => {
-        setSelectedCategoryId(categoryId);
-        fetchSubcategories(categoryId);
-        setShowModal(true);
-    };
 
-    const fetchSubcategories = async (categoryId) => {
-        try {
-            const response = await axios.get(`http://localhost:8081/Product/ProductSubcategories/${categoryId}`);
-            setSubcategories(response.data);
-        } catch (error) {
-            console.error('Error fetching subcategories:', error.message);
-        }
-    };
 
     const handleOpenCategoriesModal = () => {
         setOpenCategoriesModal(true);
@@ -219,8 +207,8 @@ function Categories({ userId, setUserId }) {
                         </div>
                         <div className="form-group mb-3">
                             <label>Edit categories_image</label>
-                            <input type="file" className="form-control" name="categories_image" />
-                            <img src={`http://localhost:8081/images/${editValues.categories_image}`} alt={editValues.categories_image} style={{height: "100px"}} />
+                            <input type="file" className="form-control" name="categories_image" onChange={handleEditInput} value={editValues.categories_image} />
+                            <img src={`http://localhost:8081/images/${editValues.categories_image}`} alt={editValues.categories_image} style={{ height: "100px" }} />
                         </div>
                         <div className="form-group">
                             <button className="btn btn-primary">Submit</button>
@@ -236,5 +224,6 @@ function Categories({ userId, setUserId }) {
         </>
     );
 }
+
 
 export default Categories;
