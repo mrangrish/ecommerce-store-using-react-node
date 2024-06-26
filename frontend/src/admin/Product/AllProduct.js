@@ -50,7 +50,7 @@ export default function AllProduct({ userId, setUserId }) {
             try {
                 await axios.delete(`http://localhost:8081/adminProductRouter/deleteProduct/${productId}`);
                 toast.success('Product deleted successfully!');
-                fetchData(); // Refresh data after deletion
+                fetchData();
             } catch (error) {
                 toast.error('Error deleting product!');
                 console.error('Error deleting product:', error);
