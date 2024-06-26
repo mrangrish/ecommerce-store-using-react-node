@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const db = require('../db'); 
+const db = require('../db');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -36,7 +36,7 @@ router.post('/addNewCategories', upload.single('categories_image'), (req, res) =
 
 router.post('/addNewSubcategories/:id', (
 
-req, res) => {
+    req, res) => {
     try {
         const categoryId = req.params.id;
         const subcategories_name = req.body.subcategories_name;
@@ -70,13 +70,50 @@ router.put('/updateSubcategories/:id', (req, res) => {
     }
 });
 
-router.put('/updatecategories/:id', (req,res) => {
+router.put('/updatecategories/:id', (req, res) => {
     try {
         const id = req.params.id;
         console.log(req.body);
     } catch (error) {
         res.status(500).json({ message: 'Failed to update subcategory', error: error.message });
-    } 
+    }
+})
+
+
+router.put('/updateCategoriesStatus/:id', (req, res) => {
+    try {
+        const id = req.params.id;
+        const sql = `SELECT * FROM categories WHERE id = ?`;
+        db.query(sql, [id], (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: 'Failed to count Status', error: err.message });
+            }
+    
+        if(result[0].Status === 1) {
+            const Status = 0;
+            const sql = `UPDATE categories SET Status = ? Where id = ?`;
+            db.query(sql, [Status,id], (err, result) => {
+                if(err) {
+                    return res.status(500).json({ message: 'Failed to update Categories', error: err.message});
+                }
+                res.status(200).json({ message: 'Categories Status Update SuccessFully!'});
+            });
+        } else {
+            const Status = 1;
+            const sql = `UPDATE categories SET Status = ? Where id = ?`;
+            db.query(sql, [Status,id], (err, result) => {
+                if(err) {
+                    return res.status(500).json({ message: 'Failed to update Categories', error: err.message});
+                }
+                res.status(200).json({ message: 'Categories Status Update SuccessFully!'});
+            });
+        }
+        })
+
+
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update catgeories Status', error: error.message });
+    }
 })
 
 module.exports = router;
