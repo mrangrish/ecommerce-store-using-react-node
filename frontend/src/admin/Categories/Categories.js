@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Header from "../Header";
 import SideNavbar from "../SideNavbar";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import $ from 'jquery';
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
@@ -23,7 +23,6 @@ function Categories({ userId, setUserId }) {
         categories_name: '',
         categories_image: ''
     });
-    console.log(editValues);
     const [values, setValues] = useState({
         categories_name: ''
     });
@@ -51,18 +50,19 @@ function Categories({ userId, setUserId }) {
         fetchCategories();
     }, []);
 
+
+    
     const fetchCategories = async () => {
         try {
             const response = await axios.get('http://localhost:8081/categories');
             const productData = response.data;
-            console.log(productData);
 
             const formattedData = productData.map(product => [
 
                 product.categories_name,
                 `<img src="http://localhost:8081/images/${product.categories_image}" alt="${product.categories_name}" style="width: 70px; height: 50px;"/>`,
                 `<a href="/Subcategories/${product.id}" class="btn btn-primary" >Subcategories</a>`,
-                product.Status === 1 ? "<button class='btn btn-warning'>Active</button>" : "<button class='btn btn-secondary'>DeActive</button>",
+                product.Status === 1 ? `<button class='btn btn-warning btn-Status'  data-id=${product.id}>Active</button>` : `<button class='btn btn-secondary btn-Status' data-id=${product.id}>DeActive</button>`,
                 `<button class="edit-btn btn btn-success" data-id="${product.id}" data-name="${product.categories_name}" data-image="${product.categories_image}">Edit</button>`
             ]);
             setTableData(formattedData);
@@ -70,6 +70,7 @@ function Categories({ userId, setUserId }) {
             console.error('Error fetching categories:', error.message);
         }
     };
+
 
     useEffect(() => {
         const table = $(tableRef.current).DataTable({
@@ -89,9 +90,20 @@ function Categories({ userId, setUserId }) {
             destroy: true
         });
 
-        $(tableRef.current).on('click', '.subcategories-btn', function () {
+        $(tableRef.current).on('click', '.btn-Status', function (e) {
+            e.preventDefault();
             const categoryId = $(this).data('id');
-
+            console.log(categoryId);
+            // axios
+            // .put(`http://localhost:8081/productCategories/updateCategoriesStatus/${categoryId}`)
+            // .then(res => {
+            //     const data = res.data
+            //     console.log(data);
+            //     fetchCategories();
+            // })
+            // .catch((error) => {
+            //     console.log(error)
+            // })
         });
 
         return () => {
