@@ -34,9 +34,7 @@ router.post('/addNewCategories', upload.single('categories_image'), (req, res) =
     }
 });
 
-router.post('/addNewSubcategories/:id', (
-
-    req, res) => {
+router.post('/addNewSubcategories/:id', (req, res) => {
     try {
         const categoryId = req.params.id;
         const subcategories_name = req.body.subcategories_name;
@@ -70,7 +68,7 @@ router.put('/updateSubcategories/:id', (req, res) => {
     }
 });
 
-router.put('/updatecategories/:id', (req, res) => {
+router.put('/updatecategories/:id', upload.single('categories_image'), (req, res) => {
     try {
         const id = req.params.id;
         console.log(req.body);
