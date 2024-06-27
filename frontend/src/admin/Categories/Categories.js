@@ -58,7 +58,7 @@ function Categories({ userId, setUserId }) {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:8081/categories');
+            const response = await axios.get('http://localhost:8081/productCategories/categories');
             const productData = response.data;
 
             const formattedData = productData.map(product => [
@@ -84,10 +84,9 @@ function Categories({ userId, setUserId }) {
                 { title: "Status" },
                 { title: "Action" }
             ],
-            destroy: true  // Ensure DataTable is destroyed and reinitialized properly
+            destroy: true 
         });
 
-        // Event listener for Status buttons
         $(tableRef.current).on('click', '.btn-Status', async function (e) {
             e.preventDefault();
             const categoryId = $(this).data('id');
@@ -100,7 +99,6 @@ function Categories({ userId, setUserId }) {
             }
         });
 
-        // Event listener for Edit button
         $(tableRef.current).on('click', '.edit-btn', function () {
             const id = $(this).data('id');
             const name = $(this).data('name');
