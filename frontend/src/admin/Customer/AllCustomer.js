@@ -19,10 +19,7 @@ export default function AllCustomer({userId, setUserId}) {
         setOpenSidebarToggle(!openSidebarToggle);
     };
 
-    const location = useLocation();
-    const adminId = location.state?.adminId;
-    const adminName = location.state?.adminName;
-
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
