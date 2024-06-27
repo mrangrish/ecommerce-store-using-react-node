@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('./db'); 
 
 router.get('/categories', (req, res) => {
-    const sql = "SELECT * FROM categories";
+    const sql = "SELECT * FROM categories WHERE Status = 1";
     db.query(sql, (err, categories) => {
         if (err) {
             console.error('Error fetching categories:', err);
