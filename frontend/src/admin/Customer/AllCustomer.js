@@ -31,6 +31,7 @@ export default function AllCustomer({userId, setUserId}) {
                 const formattedData = CustomerData.map(product => [
                     product.name, 
                     product.email,
+                    
                     `<button class="view-btn btn btn-warning" data-id="${product.id}">View</button>`
                 ]);
                 setTableData(formattedData);
@@ -82,7 +83,9 @@ export default function AllCustomer({userId, setUserId}) {
                         pauseOnHover
                     />
                     <div className='main-title mt-4'>
+                        
                         <h3>Customer</h3>
+                    
                     </div>
                     <table className="display" width="100%" ref={tableRef}></table>
                 </main>
