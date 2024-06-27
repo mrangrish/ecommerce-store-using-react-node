@@ -20,7 +20,6 @@ function Categories({ userId, setUserId }) {
         categories_name: '',
         categories_image: ''
     });
-
     const [values, setValues] = useState({
         categories_name: ''
     });
@@ -65,7 +64,7 @@ function Categories({ userId, setUserId }) {
             const formattedData = productData.map(product => [
                 product.categories_name,
                 `<img src="http://localhost:8081/images/${product.categories_image}" alt="${product.categories_name}" style="width: 70px; height: 50px;"/>`,
-                `<a href="/Subcategories/${product.id}" class="btn btn-primary" >Subcategories</a>`,
+                `<a href="/Subcategories/${product.id}" class="btn btn-primary">Subcategories</a>`,
                 product.Status === 1 ? `<button class='btn btn-warning btn-Status' data-id=${product.id} data-status="1">Active</button>` : `<button class='btn btn-secondary btn-Status' data-id=${product.id} data-status="0">DeActive</button>`,
                 `<button class="edit-btn btn btn-success" data-id="${product.id}" data-name="${product.categories_name}" data-image="${product.categories_image}">Edit</button>`
             ]);
@@ -80,12 +79,7 @@ function Categories({ userId, setUserId }) {
             data: tableData,
             columns: [
                 { title: "Categories Name" },
-                {
-                    title: "Categories Image",
-                    render: function (data) {
-                        return data;
-                    }
-                },
+                { title: "Categories Image" },
                 { title: "Subcategories" },
                 { title: "Status" },
                 { title: "Action" }
@@ -97,21 +91,9 @@ function Categories({ userId, setUserId }) {
         $(tableRef.current).on('click', '.btn-Status', async function (e) {
             e.preventDefault();
             const categoryId = $(this).data('id');
-            const currentStatus = $(this).data('status');
             try {
-                const response = await axios.put(`http://localhost:8081/productCategories/updateCategoriesStatus/${categoryId}`);
-                const newStatus = response.data.status;
+                await axios.put(`http://localhost:8081/productCategories/updateCategoriesStatus/${categoryId}`);
                 toast.success('Category status updated successfully!');
-
-                // Update the tableData state to reflect the new status
-                setTableData(prevData => prevData.map(row => {
-                    if (row[0] === $(this).closest('tr').find('td').first().text()) {
-                        row[3] = newStatus === 1
-                            ? `<button class='btn btn-warning btn-Status' data-id=${categoryId} data-status="1">Active</button>`
-                            : `<button class='btn btn-secondary btn-Status' data-id=${categoryId} data-status="0">DeActive</button>`;
-                    }
-                    return row;
-                }));
                 fetchCategories();
             } catch (error) {
                 toast.error('Failed to update category status!');
@@ -127,14 +109,12 @@ function Categories({ userId, setUserId }) {
             setOpenEditModal(true);
         });
 
-        // Clean up function
         return () => {
-            $(tableRef.current).off('click', '.btn-Status');  // Remove event listener for Status buttons
-            $(tableRef.current).off('click', '.edit-btn');    // Remove event listener for Edit button
-            table.destroy();  // Destroy DataTable instance
+            $(tableRef.current).off('click', '.btn-Status');
+            $(tableRef.current).off('click', '.edit-btn');
+            table.destroy();
         };
-    }, [tableData]);  // Ensure useEffect runs whenever tableData changes
-
+    }, [tableData]);
 
     const handleOpenCategoriesModal = () => {
         setOpenCategoriesModal(true);
@@ -162,11 +142,9 @@ function Categories({ userId, setUserId }) {
             formData.append('categories_name', values.categories_name);
             formData.append('categories_image', categoriesImage);
 
-            const response = await axios.post('http://localhost:8081/productCategories/addNewCategories', formData);
+            await axios.post('http://localhost:8081/productCategories/addNewCategories', formData);
 
-            setValues({
-                categories_name: '',
-            });
+            setValues({ categories_name: '' });
             setCategoriesImage(null);
 
             toast.success('Category added successfully!');
@@ -208,7 +186,7 @@ function Categories({ userId, setUserId }) {
             />
             <Modal show={openCategoriesModal} onHide={handleCloseCategoriesModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Categories</Modal.Title>
+                    <Modal.Title>Add Category</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={handleSubmit}>
@@ -234,21 +212,25 @@ function Categories({ userId, setUserId }) {
 
             <Modal show={openEditModal} onHide={handleCloseEditModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit SubCategories</Modal.Title>
+                    <Modal.Title>Edit Category</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={handleEditSubmit}>
                         <div className="form-group mb-3">
-                            <label>Edit categories</label>
+                            <label>Edit Categories</label>
                             <input type="text" className="form-control" name="categories_name" value={editValues.categories_name} onChange={handleEditInput} />
                         </div>
                         <div className="form-group mb-3">
-                            <label>Edit categories_image</label>
+                            <label>Edit Categories Image</label>
                             <input type="file" className="form-control" name="categories_image" onChange={handleEditInput} />
-                            <img src={`http://localhost:8081/images/${editValues.categories_image}`} alt={editValues.categories_image} style={{ height: "100px" }} />
+                            {editValues.categories_image instanceof File ? (
+                                <img src={URL.createObjectURL(editValues.categories_image)} alt={editValues.categories_image.name} style={{ height: "100px" }} />
+                            ) : (
+                                <img src={`http://localhost:8081/images/${editValues.categories_image}`} alt={editValues.categories_name} style={{ height: "100px" }} />
+                            )}
                         </div>
                         <div className="form-group">
-                            <button className="btn btn-primary">Submit</button>
+                            <button type="submit" className="btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </Modal.Body>
