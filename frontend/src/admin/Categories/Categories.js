@@ -6,17 +6,14 @@ import $ from 'jquery';
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
 import { Modal, Button } from 'react-bootstrap';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 function Categories({ userId, setUserId }) {
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-    const [subcategories, setSubcategories] = useState([]);
     const [openCategoriesModal, setOpenCategoriesModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
     const tableRef = useRef();
     const [tableData, setTableData] = useState([]);
-    const [openEditModal, setOpenEditModal] = useState(false);
     const [categoriesImage, setCategoriesImage] = useState(null);
     const [editValues, setEditValues] = useState({
         id: '',
@@ -69,7 +66,7 @@ function Categories({ userId, setUserId }) {
                 product.categories_name,
                 `<img src="http://localhost:8081/images/${product.categories_image}" alt="${product.categories_name}" style="width: 70px; height: 50px;"/>`,
                 `<a href="/Subcategories/${product.id}" class="btn btn-primary" >Subcategories</a>`,
-                product.Status === 1 ? `<button class='btn btn-warning btn-Status'  data-id=${product.id}>Active</button>` : `<button class='btn btn-secondary btn-Status' data-id=${product.id}>DeActive</button>`,
+                product.Status === 1 ? `<button class='btn btn-warning btn-Status' data-id=${product.id} data-status="1">Active</button>` : `<button class='btn btn-secondary btn-Status' data-id=${product.id} data-status="0">DeActive</button>`,
                 `<button class="edit-btn btn btn-success" data-id="${product.id}" data-name="${product.categories_name}" data-image="${product.categories_image}">Edit</button>`
             ]);
             setTableData(formattedData);
@@ -93,20 +90,35 @@ function Categories({ userId, setUserId }) {
                 { title: "Status" },
                 { title: "Action" }
             ],
-            destroy: true
+            destroy: true  // Ensure DataTable is destroyed and reinitialized properly
         });
 
+        // Event listener for Status buttons
         $(tableRef.current).on('click', '.btn-Status', async function (e) {
             e.preventDefault();
             const categoryId = $(this).data('id');
+            const currentStatus = $(this).data('status');
             try {
                 const response = await axios.put(`http://localhost:8081/productCategories/updateCategoriesStatus/${categoryId}`);
+                const newStatus = response.data.status;
                 toast.success('Category status updated successfully!');
+
+                // Update the tableData state to reflect the new status
+                setTableData(prevData => prevData.map(row => {
+                    if (row[0] === $(this).closest('tr').find('td').first().text()) {
+                        row[3] = newStatus === 1
+                            ? `<button class='btn btn-warning btn-Status' data-id=${categoryId} data-status="1">Active</button>`
+                            : `<button class='btn btn-secondary btn-Status' data-id=${categoryId} data-status="0">DeActive</button>`;
+                    }
+                    return row;
+                }));
                 fetchCategories();
             } catch (error) {
                 toast.error('Failed to update category status!');
             }
         });
+
+        // Event listener for Edit button
         $(tableRef.current).on('click', '.edit-btn', function () {
             const id = $(this).data('id');
             const name = $(this).data('name');
@@ -115,10 +127,14 @@ function Categories({ userId, setUserId }) {
             setOpenEditModal(true);
         });
 
+        // Clean up function
         return () => {
-            table.destroy();
+            $(tableRef.current).off('click', '.btn-Status');  // Remove event listener for Status buttons
+            $(tableRef.current).off('click', '.edit-btn');    // Remove event listener for Edit button
+            table.destroy();  // Destroy DataTable instance
         };
-    }, [tableData]);
+    }, [tableData]);  // Ensure useEffect runs whenever tableData changes
+
 
     const handleOpenCategoriesModal = () => {
         setOpenCategoriesModal(true);
@@ -179,7 +195,17 @@ function Categories({ userId, setUserId }) {
                     <table className="display" width="100%" ref={tableRef}></table>
                 </main>
             </div>
-
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <Modal show={openCategoriesModal} onHide={handleCloseCategoriesModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Categories</Modal.Title>
