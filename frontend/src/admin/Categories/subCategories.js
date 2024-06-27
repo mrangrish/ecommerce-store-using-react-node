@@ -124,8 +124,11 @@ function SubCategories({ userId, setUserId }) {
         });
 
         return () => {
-            $(tableRef.current).off('click', '.edit-btn');
+            $(tableRef.current).off('click', '.btn-Status');
+            $(tableRef.current).off('click', '.edit-btn');  
+            table.destroy();  
         };
+    
     }, [tableData]);
 
     const handleOpenCategoriesModal = () => {
