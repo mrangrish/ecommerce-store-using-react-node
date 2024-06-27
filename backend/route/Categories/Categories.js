@@ -69,13 +69,37 @@ router.put('/updateSubcategories/:id', (req, res) => {
 });
 
 router.put('/updatecategories/:id', upload.single('categories_image'), (req, res) => {
+
     try {
-        const id = req.params.id;
-        console.log(req.body);
+        if (req.file) {
+            const categoryId = req.params.id;
+            const { categories_name } = req.body;
+            const categories_image = req.file.filename;
+            const sql = 'UPDATE categories SET categories_name = ?, categories_image = ? WHERE id = ?';
+            db.query(sql, [categories_name, categories_image], (err, result) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Failed to add subcategory', error: err.message });
+                }
+                res.status(200).json({ message: 'Subcategory added successfully!' });
+
+            });
+        } else {
+            const categoryId = req.params.id;
+            const { categories_name } = req.body;
+            const sql = 'UPDATE categories SET categories_name = ? WHERE id = ?';
+            const data = [categories_name, categoryId];
+            db.query(sql, data, (err, result) => {
+                if (err) {
+                    console.error('Error updating category:', err);
+                    return res.status(500).json({ error: 'Failed to update category.' });
+                }
+                res.status(200).json({ message: 'Category updated successfully!' });
+            });
+        }
     } catch (error) {
-        res.status(500).json({ message: 'Failed to update subcategory', error: error.message });
+        return res.status(500).json({ error: error.message })
     }
-})
+});
 
 
 router.put('/updateCategoriesStatus/:id', (req, res) => {
@@ -86,26 +110,26 @@ router.put('/updateCategoriesStatus/:id', (req, res) => {
             if (err) {
                 return res.status(500).json({ message: 'Failed to count Status', error: err.message });
             }
-    
-        if(result[0].Status === 1) {
-            const Status = 0;
-            const sql = `UPDATE categories SET Status = ? Where id = ?`;
-            db.query(sql, [Status,id], (err, result) => {
-                if(err) {
-                    return res.status(500).json({ message: 'Failed to update Categories', error: err.message});
-                }
-                res.status(200).json({ message: 'Categories Status Update SuccessFully!'});
-            });
-        } else {
-            const Status = 1;
-            const sql = `UPDATE categories SET Status = ? Where id = ?`;
-            db.query(sql, [Status,id], (err, result) => {
-                if(err) {
-                    return res.status(500).json({ message: 'Failed to update Categories', error: err.message});
-                }
-                res.status(200).json({ message: 'Categories Status Update SuccessFully!'});
-            });
-        }
+
+            if (result[0].Status === 1) {
+                const Status = 0;
+                const sql = `UPDATE categories SET Status = ? Where id = ?`;
+                db.query(sql, [Status, id], (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Failed to update Categories', error: err.message });
+                    }
+                    res.status(200).json({ message: 'Categories Status Update SuccessFully!' });
+                });
+            } else {
+                const Status = 1;
+                const sql = `UPDATE categories SET Status = ? Where id = ?`;
+                db.query(sql, [Status, id], (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Failed to update Categories', error: err.message });
+                    }
+                    res.status(200).json({ message: 'Categories Status Update SuccessFully!' });
+                });
+            }
         })
 
 
@@ -114,7 +138,7 @@ router.put('/updateCategoriesStatus/:id', (req, res) => {
     }
 })
 
-router.put('/updateSubcategoriesStatus/:id', (req,res) => {
+router.put('/updateSubcategoriesStatus/:id', (req, res) => {
     try {
         const id = req.params.id;
         const sql = `SELECT * FROM subcategories WHERE id = ?`;
@@ -122,26 +146,26 @@ router.put('/updateSubcategoriesStatus/:id', (req,res) => {
             if (err) {
                 return res.status(500).json({ message: 'Failed to count Status', error: err.message });
             }
-    
-        if(result[0].Status === 1) {
-            const Status = 0;
-            const sql = `UPDATE subcategories SET Status = ? Where id = ?`;
-            db.query(sql, [Status,id], (err, result) => {
-                if(err) {
-                    return res.status(500).json({ message: 'Failed to update Categories', error: err.message});
-                }
-                res.status(200).json({ message: 'Categories Status Update SuccessFully!'});
-            });
-        } else {
-            const Status = 1;
-            const sql = `UPDATE subcategories SET Status = ? Where id = ?`;
-            db.query(sql, [Status,id], (err, result) => {
-                if(err) {
-                    return res.status(500).json({ message: 'Failed to update Categories', error: err.message});
-                }
-                res.status(200).json({ message: 'Categories Status Update SuccessFully!'});
-            });
-        }
+
+            if (result[0].Status === 1) {
+                const Status = 0;
+                const sql = `UPDATE subcategories SET Status = ? Where id = ?`;
+                db.query(sql, [Status, id], (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Failed to update Categories', error: err.message });
+                    }
+                    res.status(200).json({ message: 'Categories Status Update SuccessFully!' });
+                });
+            } else {
+                const Status = 1;
+                const sql = `UPDATE subcategories SET Status = ? Where id = ?`;
+                db.query(sql, [Status, id], (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Failed to update Categories', error: err.message });
+                    }
+                    res.status(200).json({ message: 'Categories Status Update SuccessFully!' });
+                });
+            }
         })
 
 
