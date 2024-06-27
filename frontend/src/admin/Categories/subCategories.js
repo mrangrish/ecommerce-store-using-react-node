@@ -4,7 +4,7 @@ import SideNavbar from "../SideNavbar";
 import axios from "axios";
 import $ from "jquery";
 import { Button, Modal } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import Validation from "./Validation";
 
 function SubCategories({ userId, setUserId }) {
@@ -72,6 +72,7 @@ function SubCategories({ userId, setUserId }) {
             const productData = response.data;
             const formattedData = productData.map(product => [
                 product.subcategories_name,
+                product.Status === 1 ? `<button class='btn btn-warning btn-Status' data-id=${product.id} data-status="1">Active</button>` : `<button class='btn btn-secondary btn-Status' data-id=${product.id} data-status="0">DeActive</button>`,
                 `<button class="edit-btn btn btn-success" data-id="${product.id}" data-name="${product.subcategories_name}">Edit</button>`
             ]);
             setTableData(formattedData);
@@ -85,9 +86,34 @@ function SubCategories({ userId, setUserId }) {
             data: tableData,
             columns: [
                 { title: "Subcategories Name" },
+                { title: "Status" },
                 { title: "Action" }
             ],
             destroy: true
+        });
+
+        $(tableRef.current).on('click', '.btn-Status', async function (e) {
+            e.preventDefault();
+            const categoryId = $(this).data('id');
+            const currentStatus = $(this).data('status');
+            try {
+                const response = await axios.put(`http://localhost:8081/productCategories/updateSubcategoriesStatus/${categoryId}`);
+                const newStatus = response.data.status;
+                toast.success('Category status updated successfully!');
+
+                // Update the tableData state to reflect the new status
+                setTableData(prevData => prevData.map(row => {
+                    if (row[0] === $(this).closest('tr').find('td').first().text()) {
+                        row[3] = newStatus === 1
+                            ? `<button class='btn btn-warning btn-Status' data-id=${categoryId} data-status="1">Active</button>`
+                            : `<button class='btn btn-secondary btn-Status' data-id=${categoryId} data-status="0">DeActive</button>`;
+                    }
+                    return row;
+                }));
+                fetchCategories();
+            } catch (error) {
+                toast.error('Failed to update category status!');
+            }
         });
 
         $(tableRef.current).on('click', '.edit-btn', function () {
@@ -128,6 +154,17 @@ function SubCategories({ userId, setUserId }) {
                     <table className="display" width="100%" ref={tableRef}></table>
                 </main>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <Modal show={openCategoriesModal} onHide={handleCloseCategoriesModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Subcategories</Modal.Title>
