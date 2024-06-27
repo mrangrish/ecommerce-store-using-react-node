@@ -14,6 +14,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.get('/categories', (req, res) => {
+    const sql = "SELECT * FROM categories";
+    db.query(sql, (err, categories) => {
+        if (err) {
+            console.error('Error fetching categories:', err);
+            return res.status(500).json({ error: 'Error fetching categories' });
+        }
+        res.json(categories);
+    });
+});
+
 router.post('/addNewCategories', upload.single('categories_image'), (req, res) => {
     try {
         const { categories_name } = req.body;
