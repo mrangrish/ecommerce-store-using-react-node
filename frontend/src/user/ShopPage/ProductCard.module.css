@@ -1,21 +1,25 @@
 .card {
-    display: flex;
-    flex-direction: column;
-  }
-  .card img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-  }
-  .card-horizontal {
-    display: flex;
-    flex: 1 1 auto;
-  }
-  .card-horizontal .card-body {
-    flex: 1 1 auto;
-  }
-  .card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+  display: flex;
+  flex-direction: column;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.card-horizontal {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.card-horizontal .card-body {
+  flex: 1 1 auto;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
