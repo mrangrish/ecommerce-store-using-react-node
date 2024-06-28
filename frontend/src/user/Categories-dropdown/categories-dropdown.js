@@ -4,8 +4,8 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // For custom navigation buttons
-import './style.css'; // Make sure your custom styles are imported correctly
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import './style.css';
 
 const CategoriesDropDown = () => {
     const [categories, setCategories] = useState([]);
@@ -18,7 +18,8 @@ const CategoriesDropDown = () => {
                 const response = await axios.get("http://localhost:8081/categories");
                 setCategories(response.data);
 
-                response.data.forEach(async (category) => {
+                // Fetch subcategories for each category
+                const promises = response.data.map(async (category) => {
                     try {
                         const productsResponse = await axios.get(`http://localhost:8081/GetSubcategories/${category.id}`);
                         setCategoryProducts((prevState) => ({
@@ -29,10 +30,13 @@ const CategoriesDropDown = () => {
                         console.log(error);
                     }
                 });
+
+                await Promise.all(promises); 
             } catch (error) {
                 console.log(error);
             }
         };
+
         fetchShopCategories();
     }, []);
 
@@ -59,6 +63,27 @@ const CategoriesDropDown = () => {
         }
     };
 
+    const renderSubcategories = (subcategories) => {
+        const subcategoryGroups = [];
+        let subcategoryList = [];
+    
+        subcategories.forEach((subcategory, index) => {
+            subcategoryList.push(
+                <li key={subcategory.id}>{subcategory.subcategories_name}</li>
+            );
+    
+            // After every 5 subcategories or at the end of the list, create a new list
+            if ((index + 1) % 5 === 0 || index === subcategories.length - 1) {
+                subcategoryGroups.push(
+                    <ul key={index / 5}>{subcategoryList}</ul>
+                );
+                subcategoryList = []; // Clear the list for the next group
+            }
+        });
+    
+        return subcategoryGroups;
+    };
+    
     return (
         <div className="container1 bg-body-tertiary shadow-sm rounded container-fluid">
             <ul id="autoWidth" className="cs-hidden d-none d-md-flex">
@@ -81,11 +106,7 @@ const CategoriesDropDown = () => {
                             </div>
                             {hoveredCategory === category.id && (
                                 <div className="mega-dropdown bg-body-tertiary">
-                                    <ul>
-                                        {categoryProducts[category.id]?.map((subcategories) => (
-                                            <li key={subcategories.id}>{subcategories.subcategories_name}</li>
-                                        ))}
-                                    </ul>
+                                    {renderSubcategories(categoryProducts[category.id] || [])}
                                 </div>
                             )}
                         </div>
@@ -112,11 +133,7 @@ const CategoriesDropDown = () => {
                             </p>
                         </div>
                         <div className="mega-dropdown bg-body-tertiary">
-                            <ul>
-                                {categoryProducts[category.id]?.map((subcategories) => (
-                                    <li key={subcategories.id}>{subcategories.subcategories_name}</li>
-                                ))}
-                            </ul>
+                            {renderSubcategories(categoryProducts[category.id] || [])}
                         </div>
                     </div>
                 ))}
