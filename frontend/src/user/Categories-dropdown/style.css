@@ -68,11 +68,12 @@
     }
     .box {
         position: relative;
-        width: 128px;
+        width: 100%;
         padding: 6px;
         text-align: center;
         cursor: pointer;
     }
+    
 }
 
 .carousel-arrow {
