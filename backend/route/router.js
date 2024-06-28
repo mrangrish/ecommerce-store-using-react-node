@@ -28,4 +28,22 @@ router.get('/latestProduct', (req, res) => {
     }
 });
 
+router.get('/GetSubcategories/:category_id', (req, res) => {
+    try {
+        const category_id = req.params.category_id;
+        const sql = `SELECT * FROM subcategories WHERE categories_id = ? AND Status = 1`;
+        db.query(sql, [category_id], (err, products) => {
+            if (err) {
+                console.log('Error fetching category products:', err);
+                return res.status(500).json({ error: 'Error fetching products' });
+            }
+            res.status(200).json(products);
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+
 module.exports = router;
