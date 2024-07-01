@@ -15,12 +15,10 @@ function SlideShow({ userId, setUserId }) {
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
     const [values, setValues] = useState({
         content: '',
-        button: '',
+
     });
-    const [checked, setChecked] = React.useState(false);
-
-
-
+    const [checkbox, setCheckbox] = useState(false);
+    
     const [categoriesImage, setCategoriesImage] = useState(null);
     const toggleSidebar = () => {
         setOpenSidebarToggle(!openSidebarToggle);
@@ -29,7 +27,7 @@ function SlideShow({ userId, setUserId }) {
     const handleSubmit = (event) => {
         event.preventDefault();
         try {
-            console.log(values);
+        
             const formData = new FormData();
             formData.append('content', values.content);
             formData.append('image', values.image);
@@ -49,8 +47,7 @@ function SlideShow({ userId, setUserId }) {
         if (name === 'categories_image') {
             setCategoriesImage(URL.createObjectURL(files[0]));
         }
-        setChecked(!checked);
-
+        setCheckbox(event.target.checked);
     };
 
 
@@ -111,7 +108,7 @@ function SlideShow({ userId, setUserId }) {
             </main>
             <Modal show={openCategoriesModal} onHide={() => setOpenCategoriesModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add New Category</Modal.Title>
+                    <Modal.Title>Add New SlideShow</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -124,11 +121,8 @@ function SlideShow({ userId, setUserId }) {
                             <input type="file" className="form-control" id="image" name="image" onChange={handleInput} accept="image/*" required />
                         </div>
                         <div>
-                            <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={handleInput}
-                            />
+                            <input type="checkbox"  onChange={handleInput} />
+                            <p>Checkbox is {checkbox ? "checked" : "unchecked"}</p>
                         </div>
 
                         {categoriesImage && <img src={categoriesImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
