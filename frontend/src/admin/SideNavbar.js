@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill } from 'react-icons/bs';
-import { IoBagOutline } from "react-icons/io5";
+import { IoBagOutline, IoSwapHorizontal } from "react-icons/io5";
 import { Link, useLocation } from 'react-router-dom';
 import { GoListOrdered } from "react-icons/go";
 
@@ -58,6 +58,9 @@ function SideNavbar({ openSidebarToggle, OpenSidebar }) {
                 <Link to="/AllOrders">
                 <GoListOrdered className='icon' /> Orders
                 </Link>
+                </li>
+                <li className={`sidebar-list-item ${activeLink === '/SlideShow' ? 'active': '' }`} onClick={() => handleLinkClick('/SlideShow')}>
+                <Link to='/SlideShow'> <IoSwapHorizontal/> SlideShow</Link>
                 </li>
             </ul>
         </aside>
