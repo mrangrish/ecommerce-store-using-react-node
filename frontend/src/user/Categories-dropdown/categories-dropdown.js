@@ -85,8 +85,8 @@ const CategoriesDropDown = () => {
         if (subcategoryGroups.length > 1) {
             const secondList = subcategoryGroups.slice(1);
             subcategoryGroups = [
-                <ul key={0}>{subcategoryGroups[0]}</ul>,
-                <ul key={1}>{secondList}</ul>,
+                <li key={0}>{subcategoryGroups[0]}</li>,
+                <li key={1}>{secondList}</li>,
             ];
         }
     
@@ -101,7 +101,7 @@ const CategoriesDropDown = () => {
                         key={category.id}
                         className="item-a"
                         onMouseEnter={() => setHoveredCategory(category.id)}
-                        onMouseLeave={() => setHoveredCategory(null)}
+                        // onMouseLeave={() => setHoveredCategory(null)}
                     >
                         <div className="dropdown">
                             <div className="box">
@@ -109,7 +109,7 @@ const CategoriesDropDown = () => {
                                     className="model" />
                                 <div className="details">
                                     <p className="character-details">
-                                        {category.categories_name}  {category.id && categoryProducts[category.id] && categoryProducts[category.id].length > 0 && ( <FontAwesomeIcon icon={faAngleDown} /> ) }
+                                        {category.categories_name} {category.id && categoryProducts[category.id] && categoryProducts[category.id].length > 0 && ( <FontAwesomeIcon icon={faAngleDown} /> ) }
                                     </p>
                                 </div>
                             </div>
