@@ -18,7 +18,7 @@ const OrderDetails = require('./route/OrderDetails/orderdetails.js');
 const mailVerified = require('./route/OrderDetails/OrderMailverification/mailVerified.js');
 const PaymentCart = require('./route/OrderDetails/PaymentCart.js');
 const Categories = require('./route/Categories/Categories.js');
-
+const SlideShow = require('./route/SlideShow/SlideShow.js');
 const app = express();
 
 const corsOptions = {
@@ -54,13 +54,12 @@ app.use('/orderdetails', OrderDetails);
 app.use('/mailverified', mailVerified);
 app.use('/AddPaymentCart', PaymentCart);
 app.use('/productCategories', Categories);
+app.use('/SlideShow', SlideShow);
 
 app.get('/session', (req, res) => {
     if (req.session.userId) {
         return res.json({ userId: req.session.userId });
     } else {
-        
-        // console.log(null);
         return res.json({ userId: null });
     }
 
