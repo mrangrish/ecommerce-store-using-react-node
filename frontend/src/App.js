@@ -20,6 +20,7 @@ import OrderDetails from './user/orders/orderdetails';
 import PaymentInputs from './user/orders/PaymentInputs';
 import Categories from './admin/Categories/Categories';
 import SubCategories from './admin/Categories/subCategories';
+import SlideShow from './admin/SlideShow/SlideShow';
 
 function App() {
     const [userId, setUserId] = useState(null);
@@ -64,6 +65,7 @@ function App() {
                 <Route path='/allproduct' element={<AllProduct userId={userId} setUserId={setUserId} />} />
                 <Route path='/Categories' element={<Categories  userId={userId} setUserId={setUserId} />} />
                 <Route path='/subCategories/:id' element={<SubCategories userId={userId} setUserId={setUserId} />} />
+                <Route path='/SlideShow' element={<SlideShow  userId={userId} setUserId={setUserId}/>} />
             </Routes>
         </BrowserRouter>
     );
