@@ -18,7 +18,7 @@ function SlideShow({ userId, setUserId }) {
 
     });
     const [checkbox, setCheckbox] = useState(false);
-    
+
     const [categoriesImage, setCategoriesImage] = useState(null);
     const toggleSidebar = () => {
         setOpenSidebarToggle(!openSidebarToggle);
@@ -27,7 +27,7 @@ function SlideShow({ userId, setUserId }) {
     const handleSubmit = (event) => {
         event.preventDefault();
         try {
-        
+
             const formData = new FormData();
             formData.append('content', values.content);
             formData.append('image', values.image);
@@ -74,13 +74,11 @@ function SlideShow({ userId, setUserId }) {
         if ($.fn.DataTable.isDataTable(tableRef.current)) {
             $(tableRef.current).DataTable().destroy();
         }
-
         const table = $(tableRef.current).DataTable({
             data: tableData,
             columns: [
                 { title: "Content" },
-                { title: "Slide Image" },
-
+                { title: "Slide Image" }
             ],
             destroy: true
         });
@@ -121,7 +119,7 @@ function SlideShow({ userId, setUserId }) {
                             <input type="file" className="form-control" id="image" name="image" onChange={handleInput} accept="image/*" required />
                         </div>
                         <div>
-                            <input type="checkbox"  onChange={handleInput} />
+                            <input type="checkbox" onChange={handleInput} />
                             <p>Checkbox is {checkbox ? "checked" : "unchecked"}</p>
                         </div>
 
