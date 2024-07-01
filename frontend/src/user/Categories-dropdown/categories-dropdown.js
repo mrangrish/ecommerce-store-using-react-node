@@ -64,7 +64,7 @@ const CategoriesDropDown = () => {
     };
 
     const renderSubcategories = (subcategories) => {
-        const subcategoryGroups = [];
+        let subcategoryGroups = [];
         let subcategoryList = [];
     
         subcategories.forEach((subcategory, index) => {
@@ -72,14 +72,23 @@ const CategoriesDropDown = () => {
                 <li key={subcategory.id}>{subcategory.subcategories_name}</li>
             );
     
-            // After every 5 subcategories or at the end of the list, create a new list
-            if ((index + 1) % 5 === 0 || index === subcategories.length - 1) {
+            // After every 4 subcategories or at the end of the list, create a new list
+            if ((index + 1) % 4 === 0 || index === subcategories.length - 1) {
                 subcategoryGroups.push(
-                    <ul key={index / 5}>{subcategoryList}</ul>
+                    <ul key={index / 4}>{subcategoryList}</ul>
                 );
                 subcategoryList = []; // Clear the list for the next group
             }
         });
+    
+        // If there are more than 4 subcategories, create another ul list
+        if (subcategoryGroups.length > 1) {
+            const secondList = subcategoryGroups.slice(1);
+            subcategoryGroups = [
+                <ul key={0}>{subcategoryGroups[0]}</ul>,
+                <ul key={1}>{secondList}</ul>,
+            ];
+        }
     
         return subcategoryGroups;
     };
@@ -100,13 +109,13 @@ const CategoriesDropDown = () => {
                                     className="model" />
                                 <div className="details">
                                     <p className="character-details">
-                                        {category.categories_name} <FontAwesomeIcon icon={faAngleDown} />
+                                        {category.categories_name}  {category.id && categoryProducts[category.id] && categoryProducts[category.id].length > 0 && ( <FontAwesomeIcon icon={faAngleDown} /> ) }
                                     </p>
                                 </div>
                             </div>
-                            {hoveredCategory === category.id && (
+                            {hoveredCategory === category.id && categoryProducts[category.id] && categoryProducts[category.id].length > 0 && (
                                 <div className="mega-dropdown bg-body-tertiary">
-                                    {renderSubcategories(categoryProducts[category.id] || [])}
+                                    {renderSubcategories(categoryProducts[category.id])}
                                 </div>
                             )}
                         </div>
@@ -132,9 +141,11 @@ const CategoriesDropDown = () => {
                                 {category.categories_name} <FontAwesomeIcon icon={faAngleDown} />
                             </p>
                         </div>
-                        <div className="mega-dropdown bg-body-tertiary">
-                            {renderSubcategories(categoryProducts[category.id] || [])}
-                        </div>
+                        {categoryProducts[category.id] && categoryProducts[category.id].length > 0 && (
+                            <div className="mega-dropdown bg-body-tertiary">
+                                {renderSubcategories(categoryProducts[category.id])}
+                            </div>
+                        )}
                     </div>
                 ))}
             </Carousel>
