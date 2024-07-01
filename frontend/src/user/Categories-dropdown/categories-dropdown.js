@@ -80,8 +80,7 @@ const CategoriesDropDown = () => {
                 subcategoryList = []; // Clear the list for the next group
             }
         });
-    
-        // If there are more than 4 subcategories, create another ul list
+
         if (subcategoryGroups.length > 1) {
             const secondList = subcategoryGroups.slice(1);
             subcategoryGroups = [
@@ -101,7 +100,7 @@ const CategoriesDropDown = () => {
                         key={category.id}
                         className="item-a"
                         onMouseEnter={() => setHoveredCategory(category.id)}
-                        // onMouseLeave={() => setHoveredCategory(null)}
+                        onMouseLeave={() => setHoveredCategory(null)}
                     >
                         <div className="dropdown">
                             <div className="box">
@@ -122,17 +121,7 @@ const CategoriesDropDown = () => {
                     </li>
                 ))}
             </ul>
-            <Carousel
-                responsive={responsive}
-                autoPlay
-                autoPlaySpeed={5000}
-                ssr
-                infinite
-                arrows
-                customLeftArrow={<button className="carousel-arrow left"><FiChevronLeft /></button>}
-                customRightArrow={<button className="carousel-arrow right"><FiChevronRight /></button>}
-                className="d-md-none"
-            >
+            <Carousel responsive={responsive} autoPlay autoPlaySpeed={5000} ssr infinite arrows customLeftArrow={<button className="carousel-arrow left"><FiChevronLeft /></button>} customRightArrow={<button className="carousel-arrow right"><FiChevronRight /></button>} className="d-md-none">
                 {categories.map((category) => (
                     <div key={category.id} className="box">
                         <img src={`http://localhost:8081/images/${category.categories_image}`} alt="" className="model" />
