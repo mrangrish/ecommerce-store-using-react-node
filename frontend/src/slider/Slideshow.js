@@ -76,7 +76,6 @@ function Slideshow() {
   }, []);
 
   const handleSlideChange = (index) => {
-    // Update the current URL when the slide changes
     setCurrentUrl(slideImages[index].learnMoreUrl);
   };
 
@@ -96,7 +95,7 @@ function Slideshow() {
             <div style={slideContentStyle} data-aos="fade-right">
               <h2>{slide.title}</h2>
               <p>{slide.description}</p>
-              {/* Displaying the URL for all images */}
+          
               <a href={currentUrl} className="btn btn-primary">Learn More</a>
             </div>
           </div>
